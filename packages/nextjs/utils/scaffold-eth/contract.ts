@@ -179,7 +179,7 @@ export type UseScaffoldReadConfig<
     Omit<UseReadContractParameters, "chainId" | "abi" | "address" | "functionName" | "args">
 >;
 
-export type ScaffoldWriteContractVariables<
+export type scaffoldWriteContractVariables<
   TContractName extends ContractName,
   TFunctionName extends ExtractAbiFunctionNames<ContractAbi<TContractName>, WriteAbiStateMutability>,
 > = IsContractDeclarationMissing<
@@ -197,7 +197,7 @@ export type TransactorFuncOptions = {
   blockConfirmations?: number;
 };
 
-export type ScaffoldWriteContractOptions = MutateOptions<
+export type scaffoldWriteContractOptions = MutateOptions<
   WriteContractReturnType,
   WriteContractErrorType,
   WriteVariables,

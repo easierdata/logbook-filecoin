@@ -1,9 +1,8 @@
 import fs from "fs";
 import path from "path";
-import { hardhat } from "viem/chains";
+import { foundry } from "viem/chains";
 import { AddressComponent } from "~~/app/blockexplorer/_components/AddressComponent";
 import deployedContracts from "~~/contracts/deployedContracts";
-import { isZeroAddress } from "~~/utils/scaffold-eth/common";
 import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 
 type PageProps = {
@@ -38,7 +37,7 @@ async function fetchByteCodeAndAssembly(buildInfoDirectory: string, contractPath
 
 const getContractData = async (address: string) => {
   const contracts = deployedContracts as GenericContractsDeclaration | null;
-  const chainId = hardhat.id;
+  const chainId = foundry.id;
   let contractPath = "";
 
   const buildInfoDirectory = path.join(
@@ -50,8 +49,8 @@ const getContractData = async (address: string) => {
     "..",
     "..",
     "..",
-    "hardhat",
-    "artifacts",
+    "foundry",
+    "out",
     "build-info",
   );
 
@@ -77,16 +76,8 @@ const getContractData = async (address: string) => {
   return { bytecode, assembly };
 };
 
-export function generateStaticParams() {
-  // An workaround to enable static exports in Next.js, generating single dummy page.
-  return [{ address: "0x0000000000000000000000000000000000000000" }];
-}
-
 const AddressPage = async ({ params }: PageProps) => {
   const address = params?.address as string;
-
-  if (isZeroAddress(address)) return null;
-
   const contractData: { bytecode: string; assembly: string } | null = await getContractData(address);
   return <AddressComponent address={address} contractData={contractData} />;
 };

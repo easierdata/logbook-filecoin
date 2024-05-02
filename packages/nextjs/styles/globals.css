@@ -30,3 +30,8 @@ p {
 .btn.btn-ghost {
   @apply shadow-none;
 }
+
+/* mapbox */
+.map-container {
+  height: 50vh;
+}

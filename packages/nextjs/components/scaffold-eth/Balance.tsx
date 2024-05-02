@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Address, formatEther } from "viem";
+import { useBalance, useBlockNumber } from "wagmi";
 import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
-import { useWatchBalance } from "~~/hooks/scaffold-eth/useWatchBalance";
 import { useGlobalState } from "~~/services/store/store";
 
 type BalanceProps = {
@@ -17,12 +18,16 @@ type BalanceProps = {
  */
 export const Balance = ({ address, className = "", usdMode }: BalanceProps) => {
   const { targetNetwork } = useTargetNetwork();
+
+  const queryClient = useQueryClient();
+  const { data: blockNumber } = useBlockNumber({ watch: true, chainId: targetNetwork.id });
   const price = useGlobalState(state => state.nativeCurrencyPrice);
   const {
     data: balance,
     isError,
     isLoading,
-  } = useWatchBalance({
+    queryKey,
+  } = useBalance({
     address,
   });
 
@@ -33,6 +38,11 @@ export const Balance = ({ address, className = "", usdMode }: BalanceProps) => {
       setDisplayUsdMode(prevMode => !prevMode);
     }
   };
+
+  useEffect(() => {
+    queryClient.invalidateQueries({ queryKey });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [blockNumber]);
 
   if (!address || isLoading || balance === null) {
     return (
