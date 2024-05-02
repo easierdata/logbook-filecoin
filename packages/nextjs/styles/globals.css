@@ -31,6 +31,10 @@ p {
   @apply shadow-none;
 }
 
+button:disabled {
+  background-color: red;
+}
+
 /* mapbox */
 .map-container {
   height: 50vh;
