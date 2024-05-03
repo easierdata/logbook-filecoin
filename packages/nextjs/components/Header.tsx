@@ -4,12 +4,12 @@ import React, { useCallback, useRef, useState } from "react";
 // import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { FaucetButton, RainbowKitCustomConnectButton } from "../components/scaffold-eth";
+import { useOutsideClick } from "../hooks/scaffold-eth";
 import {
   Bars3Icon,
   /*BugAntIcon*/
 } from "@heroicons/react/24/outline";
-import { FaucetButton, RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
-import { useOutsideClick } from "~~/hooks/scaffold-eth";
 
 type HeaderMenuLink = {
   label: string;
@@ -27,6 +27,14 @@ export const menuLinks: HeaderMenuLink[] = [
   //   href: "/debug",
   //   icon: <BugAntIcon className="h-4 w-4" />,
   // },
+  {
+    label: "Checkin form (for dev)",
+    href: "/checkinForm",
+  },
+  {
+    label: "attestation info (for dev)",
+    href: "/attestationInfo",
+  },
 ];
 
 export const HeaderMenuLinks = () => {
