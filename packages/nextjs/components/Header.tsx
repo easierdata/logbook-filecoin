@@ -4,12 +4,12 @@ import React, { useCallback, useRef, useState } from "react";
 // import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { FaucetButton, RainbowKitCustomConnectButton } from "../components/scaffold-eth";
+import { useOutsideClick } from "../hooks/scaffold-eth";
 import {
   Bars3Icon,
   /*BugAntIcon*/
 } from "@heroicons/react/24/outline";
-import { FaucetButton, RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
-import { useOutsideClick } from "~~/hooks/scaffold-eth";
 
 type HeaderMenuLink = {
   label: string;
@@ -27,6 +27,14 @@ export const menuLinks: HeaderMenuLink[] = [
   //   href: "/debug",
   //   icon: <BugAntIcon className="h-4 w-4" />,
   // },
+  {
+    label: "Checkin form (for dev)",
+    href: "/checkinForm",
+  },
+  {
+    label: "attestation info (for dev)",
+    href: "/attestationInfo",
+  },
 ];
 
 export const HeaderMenuLinks = () => {
@@ -91,7 +99,7 @@ export const Header = () => {
             </ul>
           )}
         </div>
-        <Link href="/" passHref className="hidden lg:flex items-center gap-2 ml-4 mr-6 shrink-0">
+        <Link href="/" passHref className="hidden lg:flex items-center gap-2 ml-4 mr-4 shrink-0 grow-10">
           <div className="flex relative w-10 h-10">
             {/* <Image alt="SE2 logo" className="cursor-pointer" fill src="/logo.svg" /> */}
           </div>
@@ -103,7 +111,9 @@ export const Header = () => {
         <ul className="hidden lg:flex lg:flex-nowrap menu menu-horizontal px-1 gap-2">
           <HeaderMenuLinks />
         </ul>
+        <h1 className="text-center block font-bold ml-2">Astral&nbsp;checkin✨</h1>
       </div>
+
       <div className="navbar-end flex-grow mr-4">
         <RainbowKitCustomConnectButton />
         <FaucetButton />
