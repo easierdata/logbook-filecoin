@@ -10,6 +10,7 @@ import { ProgressBar } from "../components/scaffold-eth/ProgressBar";
 import { useNativeCurrencyPrice } from "../hooks/scaffold-eth";
 import { useGlobalState } from "../services/store/store";
 import { wagmiConfig } from "../services/web3/wagmiConfig";
+import { EASProvider } from "./EasContextProvider";
 import { RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
@@ -59,7 +60,9 @@ export const ScaffoldEthAppWithProviders = ({ children }: { children: React.Reac
       <QueryClientProvider client={queryClient}>
         <ProgressBar />
         <RainbowKitProvider avatar={BlockieAvatar} theme={darkTheme()}>
-          <ScaffoldEthApp>{children}</ScaffoldEthApp>
+          <EASProvider>
+            <ScaffoldEthApp>{children}</ScaffoldEthApp>
+          </EASProvider>
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
