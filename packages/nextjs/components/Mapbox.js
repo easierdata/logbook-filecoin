@@ -4,8 +4,7 @@ import React, { useRef, useEffect, useState } from "react";
 
 mapboxgl.accessToken = "pk.eyJ1Ijoicm9uY2h1Y2siLCJhIjoiY2x2Y2o5Z2drMGY3cjJrcGI4b2xsNzdtaCJ9.gi5RJ8qRhTSwfYuhVwhmvQ";
 
-
-export default function Mapbox({ height = "" }) {
+export default function Mapbox({ height = "100%" }) {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const [lng, setLng] = useState(-118.464182);
@@ -32,7 +31,7 @@ export default function Mapbox({ height = "" }) {
       {/* <div className="sidebar">
         Longitude: {lng} | Latitude: {lat} | Zoom: {zoom}
       </div> */}
-      <div ref={mapContainer} className="map-container" style={height ? { height: height } : {}} />
+      <div ref={mapContainer} className="map-container" style={{ height }} />
     </div>
   );
 }

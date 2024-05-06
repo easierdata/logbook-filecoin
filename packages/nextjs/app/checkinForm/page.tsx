@@ -13,10 +13,11 @@ import Mapbox from "~~/components/Mapbox";
 
 const CheckinForm: NextPage = () => {
   const { address: connectedAddress } = useAccount(); //get address from wagmi
+  const nowInSeconds = Math.floor(Date.now() / 1000);
   const [formValues, setFormValues] = useState({
     coordinateInputX: 0, // to be picked up by prop
     coordinateInputY: 0, // to be picked up by prop
-    timestamp: Math.floor(Date.now() / 1000),
+    timestamp: nowInSeconds,
     data: "Something you wanna add.",
   });
 
@@ -38,6 +39,11 @@ const CheckinForm: NextPage = () => {
   ]);
 
   const schemaUID = easConfig.SCHEMA_UID_SEPOLIA; // TODO: read according to chainId
+
+  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+    event.preventDefault();
+    setFormValues({ ...formValues, [event.target.name]: event.target.value });
+  }
 
   // Set attestation from EAS api
   function handleSubmit(event: SyntheticEvent) {
@@ -64,10 +70,6 @@ const CheckinForm: NextPage = () => {
         console.log("[🧪 DEBUG](err):", err);
       });
   }
-  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-    event.preventDefault();
-    setFormValues({ ...formValues, [event.target.name]: event.target.value });
-  }
 
   return (
     <>
@@ -79,16 +81,10 @@ const CheckinForm: NextPage = () => {
             <div className="card-body mt-5">
               <h2 className="card-title">Check-in details:</h2>
               <div className="flex-col card-actions justify-end">
-                <label className="flex center flex-row items-center w-full">
+                {/* <label className="flex center flex-row items-center w-full">
                   <div>Address:</div>
-                  <input
-                    type="text"
-                    name="subject"
-                    value={connectedAddress}
-                    placeholder={connectedAddress}
-                    className="input w-full"
-                  />
-                </label>
+                  <input type="text" name="subject" value={connectedAddress} className="input w-full" />
+                </label> */}
                 <label className="flex center flex-row items-center">
                   <div>Coordinate:&nbsp;</div>
                   (
@@ -97,6 +93,8 @@ const CheckinForm: NextPage = () => {
                     name="coordinateInputX"
                     placeholder={formValues.coordinateInputX.toString()}
                     className="input w-full max-w-xs"
+                    value={formValues.coordinateInputX}
+                    onChange={handleChange}
                   />
                   ,
                   <input
@@ -104,6 +102,8 @@ const CheckinForm: NextPage = () => {
                     name="coordinateInputY"
                     placeholder={formValues.coordinateInputY.toString()}
                     className="input w-full max-w-xs"
+                    value={formValues.coordinateInputY}
+                    onChange={handleChange}
                   />
                   )
                 </label>
@@ -113,9 +113,8 @@ const CheckinForm: NextPage = () => {
                   <input
                     type="number"
                     name="timestamp"
-                    onChange={handleChange}
                     value={formValues.timestamp}
-                    placeholder={formValues.timestamp.toString()}
+                    onChange={handleChange}
                     className="input w-full max-w-xs"
                   />
                 </label>
@@ -124,7 +123,8 @@ const CheckinForm: NextPage = () => {
                   {/* Not Sure we input this, might be on EAS.sol in the case of onchain attestations */}
                   <input
                     type="text"
-                    name="timestamp"
+                    name="data"
+                    value={formValues.data}
                     placeholder={formValues.data}
                     className="input w-full"
                     onChange={handleChange}
