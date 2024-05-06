@@ -47,7 +47,7 @@
     "lint-staged": "^13.0.3"
   },
   "dependencies": {
-    "@ethereum-attestation-service/eas-sdk": "^2.1.4",
+    "@ethereum-attestation-service/eas-sdk": "1.6.1",
     "ethers": "^6.12.1",
     "mapbox-gl": "^3.3.0",
     "react": "latest",

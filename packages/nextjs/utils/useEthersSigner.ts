@@ -17,6 +17,6 @@ export function clientToSigner(client: Client<Transport, Chain, Account>) {
 
 /** Hook to convert a viem Wallet Client to an ethers.js Signer. */
 export function useEthersSigner({ chainId }: { chainId?: number } = {}) {
-  const { data: signer } = useConnectorClient<Config>({ chainId });
-  return useMemo(() => (signer ? clientToSigner(signer) : undefined), [signer]);
+  const { data: client } = useConnectorClient<Config>({ chainId });
+  return useMemo(() => (client ? clientToSigner(client) : undefined), [client, client?.account]);
 }

@@ -764,18 +764,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ethereum-attestation-service/eas-sdk@npm:^2.1.4":
-  version: 2.1.4
-  resolution: "@ethereum-attestation-service/eas-sdk@npm:2.1.4"
+"@ethereum-attestation-service/eas-sdk@npm:1.6.1":
+  version: 1.6.1
+  resolution: "@ethereum-attestation-service/eas-sdk@npm:1.6.1"
   dependencies:
     "@ethereum-attestation-service/eas-contracts": 1.4.1
     ethers: ^6.11.1
-    js-base64: ^3.7.7
+    js-base64: ^3.7.6
     lodash: ^4.17.21
     multiformats: 9.9.0
     pako: ^2.1.0
     semver: ^7.6.0
-  checksum: 60e6d64c7d20d1ab57272a3de5d425c70f2d7a7c8b96c08be684b243e56cfc63dfb8c546910bba04fef21a0fb9d48d8190b1188ee9930755de9abe5361bdd462
+  checksum: 8aa310b8599e9a575d0e66291408163a8ffea335999134a452f3c85f59abaac7a48953623895a3d464914ed3196e5e4556c98b834d6387f56fd3f0c724e9b58b
   languageName: node
   linkType: hard
 
@@ -10313,7 +10313,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"js-base64@npm:^3.7.7":
+"js-base64@npm:^3.7.6":
   version: 3.7.7
   resolution: "js-base64@npm:3.7.7"
   checksum: d1b02971db9dc0fd35baecfaf6ba499731fb44fe3373e7e1d6681fbd3ba665f29e8d9d17910254ef8104e2cb8b44117fe4202d3dc54c7cafe9ba300fe5433358
@@ -13979,7 +13979,7 @@ __metadata:
   resolution: "se-2@workspace:."
   dependencies:
     "@commitlint/cli": ^19.3.0
-    "@ethereum-attestation-service/eas-sdk": ^2.1.4
+    "@ethereum-attestation-service/eas-sdk": 1.6.1
     "@types/mapbox-gl": ^3
     "@types/react": latest
     "@types/react-copy-to-clipboard": ^5.0.7
