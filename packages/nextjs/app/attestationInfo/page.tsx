@@ -12,18 +12,17 @@ const CheckinFrom: NextPage = () => {
   const { eas, isReady } = useContext(EASContext);
   const [attestation, setAttestation] = useState<Attestation>();
 
+  // Get attestation from EAS api
   useEffect(() => {
     if (!isReady) return;
-
     eas
-      .getAttestation(easConfig.ATTESTATION_ID)
+      .getAttestation(easConfig.ATTESTATION_ID) // TODO: Read attestation from url slug.
       .then(attestation => {
         console.log("[🧪 DEBUG](attestation):", attestation);
         setAttestation(attestation);
       })
       .catch(err => {
         console.log("[🧪 DEBUG](err):", err);
-        console.log("[🧪 DEBUG](eas):", eas);
       });
   }, [eas, isReady]);
 
@@ -31,6 +30,7 @@ const CheckinFrom: NextPage = () => {
     <>
       <div className="flex items-center flex-col w-full flex-grow">
         <div className="flex-grow center w-full">
+          {/* TODO: Replace with daisyUI components */}
           <h2>attestation info</h2>
           <ul>uid:{attestation?.uid}</ul>
           <ul>schema:{attestation?.schema}</ul>
