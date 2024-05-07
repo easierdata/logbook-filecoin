@@ -4,7 +4,8 @@ import mapboxgl from "!mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 
 mapboxgl.accessToken = "pk.eyJ1Ijoicm9uY2h1Y2siLCJhIjoiY2x2Y2o5Z2drMGY3cjJrcGI4b2xsNzdtaCJ9.gi5RJ8qRhTSwfYuhVwhmvQ";
-export default function Mapbox({ setCheckInActive }) {
+
+export default function Mapbox({ setCheckInActive, height = "90vh" }) {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const markersRef = useRef([]);
@@ -62,7 +63,7 @@ export default function Mapbox({ setCheckInActive }) {
       {/* <div className="sidebar">
         Longitude: {lng} | Latitude: {lat} | Zoom: {zoom}
       </div> */}
-      <div ref={mapContainer} className="map-container" />
+      <div ref={mapContainer} className="map-container" style={{ height }} />
     </div>
   );
 }
