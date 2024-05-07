@@ -28,12 +28,12 @@ export const menuLinks: HeaderMenuLink[] = [
   //   icon: <BugAntIcon className="h-4 w-4" />,
   // },
   {
-    label: "Checkin form (for dev)",
+    label: "Checkin form (dev)",
     href: "/checkinForm",
   },
   {
-    label: "attestation info (for dev)",
-    href: "/attestationInfo",
+    label: "attestation(dev)",
+    href: "/attestation",
   },
 ];
 

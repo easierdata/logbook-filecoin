@@ -1,8 +1,8 @@
 "use client";
 
 import React, { SyntheticEvent, useContext, useState } from "react";
+import { useRouter } from "next/navigation";
 import { SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
-import { ethers } from "ethers";
 import type { NextPage } from "next";
 import { useAccount } from "wagmi";
 import easConfig from "~~/EAS.config";
@@ -12,6 +12,9 @@ import Mapbox from "~~/components/Mapbox";
 // import Link from "next/link";
 
 const CheckinForm: NextPage = () => {
+  // NextJS redirect
+  const { push } = useRouter();
+
   const { address: connectedAddress } = useAccount(); //get address from wagmi
   const nowInSeconds = Math.floor(Date.now() / 1000);
   const [formValues, setFormValues] = useState({
@@ -26,7 +29,7 @@ const CheckinForm: NextPage = () => {
   // const [attestation, setAttestation] = useState<Attestation>();
 
   // Initialize SchemaEncoder with the schema string
-  const schemaEncoder = new SchemaEncoder("string[] coordinates,address subject,int256 timestamp,bytes data");
+  const schemaEncoder = new SchemaEncoder("string[] coordinates,address subject,uint256 timestamp,bytes32 message");
   const encodedData = schemaEncoder.encodeData([
     {
       name: "coordinates",
@@ -34,8 +37,8 @@ const CheckinForm: NextPage = () => {
       type: "string[]",
     },
     { name: "subject", value: connectedAddress || "0xA332573D0520ee4653a878FA23774726811ae31A", type: "address" },
-    { name: "timestamp", value: formValues.timestamp, type: "int256" },
-    { name: "data", value: ethers.encodeBytes32String(formValues.data), type: "bytes" },
+    { name: "timestamp", value: formValues.timestamp, type: "uint256" },
+    { name: "message", value: formValues.data, type: "bytes32" },
   ]);
 
   const schemaUID = easConfig.SCHEMA_UID_SEPOLIA; // TODO: read according to chainId
@@ -65,6 +68,7 @@ const CheckinForm: NextPage = () => {
       })
       .then(newAttestationUID => {
         console.log("[🧪 DEBUG](newAttestationUID):", newAttestationUID);
+        push(`/attestation/uid/${newAttestationUID}`);
       })
       .catch(err => {
         console.log("[🧪 DEBUG](err):", err);
