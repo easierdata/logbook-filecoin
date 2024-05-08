@@ -3,15 +3,13 @@
 import React, { SyntheticEvent, useContext, useState } from "react";
 import { useRouter } from "next/navigation";
 import { SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
-import type { NextPage } from "next";
 import { useAccount } from "wagmi";
 import easConfig from "~~/EAS.config";
 import { EASContext } from "~~/components/EasContextProvider";
-import Mapbox from "~~/components/Mapbox";
 
 // import Link from "next/link";
 
-const CheckinForm: NextPage = () => {
+const CheckinForm = ({ latLng = [0, 0] }) => {
   // NextJS redirect
   const { push } = useRouter();
 
@@ -81,7 +79,6 @@ const CheckinForm: NextPage = () => {
       <div className="flex items-center flex-col w-full flex-grow">
         <div className="flex-grow center w-full">
           <form onSubmit={handleSubmit} className="card m-10 bg-base-100 shadow-xl">
-            <Mapbox height={"200px"} />
             <div className="card-body mt-5">
               <h2 className="card-title">Check-in details:</h2>
               <div className="flex-col card-actions justify-end">
@@ -95,18 +92,18 @@ const CheckinForm: NextPage = () => {
                   <input
                     type="number"
                     name="coordinateInputX"
-                    placeholder={formValues.coordinateInputX.toString()}
+                    // placeholder={formValues.coordinateInputX.toString()}
                     className="input w-full max-w-xs"
-                    value={formValues.coordinateInputX}
+                    value={latLng[0]}
                     onChange={handleChange}
                   />
                   ,
                   <input
                     type="number"
                     name="coordinateInputY"
-                    placeholder={formValues.coordinateInputY.toString()}
+                    // placeholder={formValues.coordinateInputY.toString()}
                     className="input w-full max-w-xs"
-                    value={formValues.coordinateInputY}
+                    value={latLng[1]}
                     onChange={handleChange}
                   />
                   )
