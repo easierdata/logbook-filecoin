@@ -94,10 +94,11 @@ const CheckinFrom: NextPage = () => {
                 <td>{attestation?.revocable || "fetching"}</td>
               </tr>
               {/* row 6 */}
-              <tr>
+              {/* TODO: parse attestation info (opt ethers abi decoder) */}
+              {/* <tr>
                 <td>data</td>
                 <td>{attestation?.data || "fetching"}</td>
-              </tr>
+              </tr>*/}
             </tbody>
           </table>
         </div>
