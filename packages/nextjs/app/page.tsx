@@ -2,10 +2,12 @@
 
 import React, { useState } from "react";
 import Mapbox from "../components/Mapbox";
+import { useQuery } from "@apollo/client";
 // import { Address } from "../components/scaffold-eth";
 // import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import type { NextPage } from "next";
 import CheckinForm from "~~/components/CheckinForm";
+import { GET_ATTESTATIONS } from "~~/services/queries";
 
 // import Link from "next/link";
 // import { useAccount } from "wagmi";
@@ -13,6 +15,18 @@ import CheckinForm from "~~/components/CheckinForm";
 const Home: NextPage = () => {
   const [isCheckInActive, setCheckInActive] = useState(false);
   const [latLng, setLatLng] = useState([0, 0]);
+
+  const { loading, error, data } = useQuery(GET_ATTESTATIONS, {
+    variables: { schemaId: "0x10c8ef066ef5ea223e78ed7219ffdc047cfec13bd48d8315cf03b4ee8b7d2050" },
+  });
+
+  ////
+  // DEGUGGING:
+  if (data) console.log("[🧪 DEBUG](Attestations data):", data);
+  console.log("[🧪 DEBUG](Attestations loading):", loading);
+  if (error) console.log("[🧪 DEBUG](Attestations error):", error);
+  //
+
   const handleCheckIn = () => {
     console.log("Moving on to the next step!");
     // Display check-in form
@@ -26,12 +40,12 @@ const Home: NextPage = () => {
   return (
     <>
       <div className="flex items-center flex-col w-full flex-grow">
-        <div className="flex-grow center w-full">
-          <button className="my-2 p-5 bg-base-300" disabled={!isCheckInActive} onClick={handleCheckIn}>
-            <p className="text-center text-lg">CHECK - IN</p>
+        <div className="flex-grow m-2 center w-full">
+          <button className="btn btn-alert bg-base-300" disabled={!isCheckInActive} onClick={handleCheckIn}>
+            CHECK - IN
           </button>
-          <button className="my-2 p-5 bg-base-300" disabled={!isCheckInActive} onClick={cancelCheckIn}>
-            <p className="text-center text-lg">CANCEL</p>
+          <button className="btn bg-base-300" disabled={!isCheckInActive} onClick={cancelCheckIn}>
+            CANCEL{" "}
           </button>
           {/* <div className="my-2 p-5 bg-base-300">
             <p className="text-center text-lg">CONFIDENCE LEADERBOARD</p>
