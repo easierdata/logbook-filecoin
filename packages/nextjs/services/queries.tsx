@@ -19,3 +19,12 @@ export const GET_ATTESTATIONS = gql`
     }
   }
 `;
+export const GET_ATTESTATION = gql`
+  query getAttestation($id: String) {
+    attestation(where: { id: $id }) {
+      id
+      decodedDataJson
+      attester
+    }
+  }
+`;
