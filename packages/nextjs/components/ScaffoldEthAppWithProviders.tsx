@@ -1,8 +1,8 @@
 "use client";
 
+// import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import React from "react";
-// import { useTheme } from "next-themes";
 import { Footer } from "../components/Footer";
 import { Header } from "../components/Header";
 import { BlockieAvatar } from "../components/scaffold-eth";
@@ -11,6 +11,7 @@ import { useNativeCurrencyPrice } from "../hooks/scaffold-eth";
 import { useGlobalState } from "../services/store/store";
 import { wagmiConfig } from "../services/web3/wagmiConfig";
 import { EASProvider } from "./EasContextProvider";
+import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import { RainbowKitProvider, darkTheme, lightTheme } from "@rainbow-me/rainbowkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useTheme } from "next-themes";
@@ -52,6 +53,11 @@ export const ScaffoldEthAppWithProviders = ({ children }: { children: React.Reac
   const isDarkMode = resolvedTheme === "dark";
   const [mounted, setMounted] = useState(false);
 
+  const client = new ApolloClient({
+    uri: "https://sepolia.easscan.org/graphql",
+    cache: new InMemoryCache(),
+  });
+
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -65,7 +71,10 @@ export const ScaffoldEthAppWithProviders = ({ children }: { children: React.Reac
           theme={mounted ? (isDarkMode ? darkTheme() : lightTheme()) : lightTheme()}
         >
           <EASProvider>
-            <ScaffoldEthApp>{children}</ScaffoldEthApp>
+            <ApolloProvider client={client}>
+              <ScaffoldEthApp>{children}</ScaffoldEthApp>
+            </ApolloProvider>
+            ,
           </EASProvider>
         </RainbowKitProvider>
       </QueryClientProvider>
