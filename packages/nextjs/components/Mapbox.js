@@ -44,7 +44,6 @@ export default function Mapbox({ setCheckInActive, height = "90vh", setLatLng })
       // Add a pin to the map
       var newMarker = new mapboxgl.Marker({
         color: "red",
-        // anchor: "bottom",
       })
         .setLngLat(e.lngLat)
         .addTo(map.current);
