@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import React from "react";
 // import { useTheme } from "next-themes";
-import { Footer } from "../components/Footer";
+// import { Footer } from "../components/Footer";
 import { Header } from "../components/Header";
 import { BlockieAvatar } from "../components/scaffold-eth";
 import { ProgressBar } from "../components/scaffold-eth/ProgressBar";
@@ -32,7 +32,7 @@ const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
       <div className="flex flex-col min-h-screen">
         <Header />
         <main className="relative flex flex-col flex-1">{children}</main>
-        <Footer />
+        {/* <Footer /> */}
       </div>
       <Toaster />
     </>

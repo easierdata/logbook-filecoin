@@ -7,7 +7,8 @@ import type { NextPage } from "next";
 import { useAccount } from "wagmi";
 import easConfig from "~~/EAS.config";
 import { EASContext } from "~~/components/EasContextProvider";
-import Mapbox from "~~/components/Mapbox";
+
+// import Mapbox from "~~/components/Mapbox";
 
 // import Link from "next/link";
 
@@ -81,7 +82,7 @@ const CheckinForm: NextPage = () => {
       <div className="flex items-center flex-col w-full flex-grow">
         <div className="flex-grow center w-full">
           <form onSubmit={handleSubmit} className="card m-10 bg-base-100 shadow-xl">
-            <Mapbox height={"200px"} />
+            {/* <Mapbox height={"200px"} /> */}
             <div className="card-body mt-5">
               <h2 className="card-title">Check-in details:</h2>
               <div className="flex-col card-actions justify-end">
