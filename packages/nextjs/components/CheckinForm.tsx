@@ -16,8 +16,8 @@ const CheckinForm = ({ latLng = [0, 0] }) => {
   const { address: connectedAddress } = useAccount(); //get address from wagmi
   const nowInSeconds = Math.floor(Date.now() / 1000);
   const [formValues, setFormValues] = useState({
-    coordinateInputX: 0, // to be picked up by prop
-    coordinateInputY: 0, // to be picked up by prop
+    coordinateInputX: latLng[0], // to be picked up by prop
+    coordinateInputY: latLng[1], // to be picked up by prop
     timestamp: nowInSeconds,
     data: "Something you wanna add.",
   });
@@ -28,16 +28,6 @@ const CheckinForm = ({ latLng = [0, 0] }) => {
 
   // Initialize SchemaEncoder with the schema string
   const schemaEncoder = new SchemaEncoder("string[] coordinates,address subject,uint256 timestamp,bytes32 message");
-  const encodedData = schemaEncoder.encodeData([
-    {
-      name: "coordinates",
-      value: [formValues.coordinateInputX.toString(), formValues.coordinateInputY.toString()],
-      type: "string[]",
-    },
-    { name: "subject", value: connectedAddress || "0xA332573D0520ee4653a878FA23774726811ae31A", type: "address" },
-    { name: "timestamp", value: formValues.timestamp, type: "uint256" },
-    { name: "message", value: formValues.data, type: "bytes32" },
-  ]);
 
   const schemaUID = easConfig.SCHEMA_UID_SEPOLIA; // TODO: read according to chainId
 
@@ -49,6 +39,17 @@ const CheckinForm = ({ latLng = [0, 0] }) => {
   // Set attestation from EAS api
   function handleSubmit(event: SyntheticEvent) {
     if (!isReady) return; // notify user
+
+    const encodedData = schemaEncoder.encodeData([
+      {
+        name: "coordinates",
+        value: [formValues.coordinateInputX.toString(), formValues.coordinateInputY.toString()],
+        type: "string[]",
+      },
+      { name: "subject", value: connectedAddress || "0xA332573D0520ee4653a878FA23774726811ae31A", type: "address" },
+      { name: "timestamp", value: formValues.timestamp, type: "uint256" },
+      { name: "message", value: formValues.data, type: "bytes32" },
+    ]);
 
     event.preventDefault();
     eas

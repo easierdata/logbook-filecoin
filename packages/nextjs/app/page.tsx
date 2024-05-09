@@ -6,6 +6,7 @@ import { useQuery } from "@apollo/client";
 // import { Address } from "../components/scaffold-eth";
 // import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import type { NextPage } from "next";
+import easConfig from "~~/EAS.config";
 import CheckinForm from "~~/components/CheckinForm";
 import { GET_ATTESTATIONS } from "~~/services/queries";
 
@@ -17,7 +18,7 @@ const Home: NextPage = () => {
   const [latLng, setLatLng] = useState([0, 0]);
 
   const { loading, error, data } = useQuery(GET_ATTESTATIONS, {
-    variables: { schemaId: "0x10c8ef066ef5ea223e78ed7219ffdc047cfec13bd48d8315cf03b4ee8b7d2050" },
+    variables: { schemaId: easConfig.SCHEMA_UID_SEPOLIA },
   });
 
   ////

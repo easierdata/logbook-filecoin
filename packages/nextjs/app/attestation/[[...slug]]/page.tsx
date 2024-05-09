@@ -1,5 +1,6 @@
 "use client";
 
+import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useQuery } from "@apollo/client";
 import { ethers } from "ethers";
@@ -11,8 +12,15 @@ import { GET_ATTESTATION } from "~~/services/queries";
 const CheckinFrom: NextPage = () => {
   const params = useParams();
 
+  const [attestationUid, setAttestationUid] = useState("");
+
+  useEffect(() => {
+    if (!(params.slug?.length > 0) && params.slug[0] != "uid") return;
+    setAttestationUid(params.slug[1]);
+  }, [params.slug]);
+
   const { data } = useQuery(GET_ATTESTATION, {
-    variables: { id: params.slug?.length > 0 && params.slug[0] === "uid" ? params.slug[1] : "" },
+    variables: { id: attestationUid },
   });
 
   const hexToDate = (hex: string) => {
