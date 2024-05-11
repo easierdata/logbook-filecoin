@@ -37,7 +37,7 @@ const CheckinFrom: NextPage = () => {
         "[🧪 DEBUG](decodedDataJson):",
         data?.attestation?.decodedDataJson && JSON.parse(data?.attestation?.decodedDataJson),
       )}
-      <div className="hero min-h-screen bg-base-100">
+      <div className="hero bg-base-100">
         <div className="overflow-x-auto">
           <table className="table">
             {/* head */}

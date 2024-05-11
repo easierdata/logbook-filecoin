@@ -35,7 +35,3 @@ button:disabled {
   background-color: red;
 }
 
-/* mapbox */
-.map-container {
-  height: 90vh;
-}

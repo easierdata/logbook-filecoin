@@ -5,7 +5,7 @@ import React, { useEffect, useRef, useState } from "react";
 
 mapboxgl.accessToken = "pk.eyJ1Ijoicm9uY2h1Y2siLCJhIjoiY2x2Y2o5Z2drMGY3cjJrcGI4b2xsNzdtaCJ9.gi5RJ8qRhTSwfYuhVwhmvQ";
 
-export default function Mapbox({ setCheckInActive, height = "90vh", setLatLng }) {
+export default function Mapbox({ setIsControlsActive, height = "70vh", setLatLng, isCheckInActive }) {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const markersRef = useRef([]);
@@ -22,8 +22,8 @@ export default function Mapbox({ setCheckInActive, height = "90vh", setLatLng })
         zoom: zoom,
       });
     }
-    // initialize map only once
 
+    // initialize map only once
     map.current?.on("move", () => {
       setLng(map.current.getCenter().lng.toFixed(4));
       setLat(map.current.getCenter().lat.toFixed(4));
@@ -58,18 +58,32 @@ export default function Mapbox({ setCheckInActive, height = "90vh", setLatLng })
       markersRef.current.push(newMarker);
 
       // bring up prop value to control map view
-      setCheckInActive && setCheckInActive(true);
+      setIsControlsActive && setIsControlsActive(true);
 
       // TODO: fix map center on checkin click.
     });
   });
+  useEffect(() => {
+    var mapCanvas = document.getElementsByClassName("mapboxgl-canvas")[0];
+    console.log("[🧪 DEBUG](mapCanvas):", mapCanvas);
+    if (!map.current) {
+      map.current = new mapboxgl.Map({
+        container: mapContainer.current,
+        style: "mapbox://styles/mapbox/dark-v11",
+        center: [lng, lat],
+        zoom: zoom,
+      });
+    }
 
-  return (
-    <div>
-      {/* <div className="sidebar">
-        Longitude: {lng} | Latitude: {lat} | Zoom: {zoom}
-      </div> */}
-      <div ref={mapContainer} className="map-container" style={{height}}/>
-    </div>
-  );
+    if (isCheckInActive) {
+      mapCanvas.style.height = "20vh";
+      map.current.style.height = "20vh";
+      mapContainer.current.style.height = "20vh";
+      map.current.resize(50);
+    } else {
+      mapContainer.current.style.height = "80vh";
+      map.current.resize();
+    }
+  }, [isCheckInActive, zoom, lat, lng]);
+  return <div ref={mapContainer} className="card m-4 map-container" style={{ height }} />;
 }
