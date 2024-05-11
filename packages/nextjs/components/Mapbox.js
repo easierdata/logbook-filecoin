@@ -1,11 +1,13 @@
 // eslint-disable-line import/no-webpack-loader-syntax
 import mapboxgl from "!mapbox-gl";
+import { blo } from "blo";
 import "mapbox-gl/dist/mapbox-gl.css";
 import React, { useEffect, useRef, useState } from "react";
+import { useAccount } from "wagmi";
 
 mapboxgl.accessToken = "pk.eyJ1Ijoicm9uY2h1Y2siLCJhIjoiY2x2Y2o5Z2drMGY3cjJrcGI4b2xsNzdtaCJ9.gi5RJ8qRhTSwfYuhVwhmvQ";
 
-export default function Mapbox({ setIsControlsActive, height = "70vh", setLatLng, isCheckInActive }) {
+export default function Mapbox({ setIsControlsActive, height = "70vh", setLatLng, isCheckInActive, attestationsData }) {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const markersRef = useRef([]);
@@ -13,6 +15,7 @@ export default function Mapbox({ setIsControlsActive, height = "70vh", setLatLng
   const [lat, setLat] = useState(39.7323862);
   const [zoom, setZoom] = useState(15);
 
+  const { address } = useAccount();
   useEffect(() => {
     if (!map.current) {
       map.current = new mapboxgl.Map({
@@ -41,12 +44,12 @@ export default function Mapbox({ setIsControlsActive, height = "70vh", setLatLng
       // set state on parent page (to pass on checkin)
       setLatLng && setLatLng([lat, lng]);
 
+      const el = document.createElement("img");
+      el.className = "marker";
+      el.src = blo(`0x${address}`);
+
       // Add a pin to the map
-      var newMarker = new mapboxgl.Marker({
-        color: "red",
-      })
-        .setLngLat(e.lngLat)
-        .addTo(map.current);
+      var newMarker = new mapboxgl.Marker(el).setLngLat(e.lngLat).addTo(map.current);
 
       // Animated flyTo to position marker at center of map
       map.current.flyTo({
@@ -65,7 +68,6 @@ export default function Mapbox({ setIsControlsActive, height = "70vh", setLatLng
   });
   useEffect(() => {
     var mapCanvas = document.getElementsByClassName("mapboxgl-canvas")[0];
-    console.log("[🧪 DEBUG](mapCanvas):", mapCanvas);
     if (!map.current) {
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
@@ -85,5 +87,25 @@ export default function Mapbox({ setIsControlsActive, height = "70vh", setLatLng
       map.current.resize();
     }
   }, [isCheckInActive, zoom, lat, lng]);
+
+  useEffect(() => {
+    if (attestationsData && map.current) {
+      attestationsData.attestations?.map((att) => {
+        const decodedAttestation = JSON.parse(att.decodedDataJson);
+        console.log("[🧪 DEBUG](att map):", JSON.parse(att.decodedDataJson));
+        const address = decodedAttestation[1].value.value;
+        const coordinate = decodedAttestation[0].value.value;
+        const el = document.createElement("img");
+        el.className = "marker";
+        el.src = blo(`0x${address}`);
+
+        // Add a pin to the map
+        var newMarker = new mapboxgl.Marker(el).setLngLat([coordinate[1],coordinate[0]]).addTo(map.current);
+        markersRef.current.push(newMarker);
+
+      });
+    }
+  }, [attestationsData]);
+
   return <div ref={mapContainer} className="card m-4 map-container" style={{ height }} />;
 }

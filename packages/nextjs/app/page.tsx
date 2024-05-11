@@ -19,20 +19,28 @@ const Home: NextPage = () => {
   const [isControlsActive, setIsControlsActive] = useState(false);
   const [latLng, setLatLng] = useState([0, 0]);
 
-  const { loading, error, data } = useQuery(GET_ATTESTATIONS, {
+  const {
+    loading,
+    error,
+    data: attestationsData,
+  } = useQuery(GET_ATTESTATIONS, {
     variables: { schemaId: easConfig.SCHEMA_UID_SEPOLIA },
   });
 
   ////
   // DEGUGGING:
-  if (data) console.log("[🧪 DEBUG](Attestations data):", data);
   console.log("[🧪 DEBUG](Attestations loading):", loading);
   if (error) console.log("[🧪 DEBUG](Attestations error):", error);
   //
 
   return (
     <div className="">
-      <Mapbox setIsControlsActive={setIsControlsActive} setLatLng={setLatLng} isCheckInActive={isCheckInActive} />
+      <Mapbox
+        setIsControlsActive={setIsControlsActive}
+        setLatLng={setLatLng}
+        isCheckInActive={isCheckInActive}
+        attestationsData={attestationsData}
+      />
       {isCheckInActive && <CheckinForm latLng={latLng} />}
       {!isCheckInActive && <CheckInControls isControlsActive={isControlsActive} setCheckInActive={setCheckInActive} />}
     </div>
