@@ -9,7 +9,7 @@ const baseUrl = process.env.VERCEL_URL
   : `http://localhost:${process.env.PORT || 3000}`;
 const imageUrl = `${baseUrl}/thumbnail.jpg`;
 
-const title = "Astral Check-in";
+const title = "Astral Logbook";
 const titleTemplate = "%s | Astral Check-in";
 const description = "Built with 🏗 Scaffold-ETH 2";
 

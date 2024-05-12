@@ -36,6 +36,9 @@ button:disabled {
 }
 
 /* mapbox */
-.map-container {
-  height: 90vh;
+.marker {
+  background-origin: border-box;
+  background-clip: content-box, border-box;
+  border-radius: 50px;
+  border-width: medium;
 }

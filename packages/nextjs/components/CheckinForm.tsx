@@ -1,6 +1,7 @@
 "use client";
 
 import React, { SyntheticEvent, useContext, useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
 import { useAccount } from "wagmi";
@@ -19,7 +20,7 @@ const CheckinForm = ({ latLng = [0, 0] }) => {
     coordinateInputX: latLng[0], // to be picked up by prop
     coordinateInputY: latLng[1], // to be picked up by prop
     timestamp: nowInSeconds,
-    data: "Something you wanna add.",
+    data: "Memo.",
   });
 
   // Use EAS SDK
@@ -76,66 +77,54 @@ const CheckinForm = ({ latLng = [0, 0] }) => {
 
   return (
     <>
-      <h1>Checkin form view</h1>
       <div className="flex items-center flex-col w-full flex-grow">
         <div className="flex-grow center w-full">
-          <form onSubmit={handleSubmit} className="card m-10 bg-base-100 shadow-xl">
-            <div className="card-body mt-5">
-              <h2 className="card-title">Check-in details:</h2>
-              <div className="flex-col card-actions justify-end">
-                {/* <label className="flex center flex-row items-center w-full">
-                  <div>Address:</div>
-                  <input type="text" name="subject" value={connectedAddress} className="input w-full" />
-                </label> */}
-                <label className="flex center flex-row items-center">
-                  <div>Coordinate:&nbsp;</div>
-                  (
-                  <input
-                    type="number"
-                    name="coordinateInputX"
-                    // placeholder={formValues.coordinateInputX.toString()}
-                    className="input w-full max-w-xs"
-                    value={latLng[0]}
-                    onChange={handleChange}
-                  />
-                  ,
-                  <input
-                    type="number"
-                    name="coordinateInputY"
-                    // placeholder={formValues.coordinateInputY.toString()}
-                    className="input w-full max-w-xs"
-                    value={latLng[1]}
-                    onChange={handleChange}
-                  />
-                  )
-                </label>
-                <label className="flex center flex-row items-center">
-                  <div>Timestamp:</div>
-                  {/* Not Sure we input this, might be on EAS.sol in the case of onchain attestations */}
-                  <input
-                    type="number"
-                    name="timestamp"
-                    value={formValues.timestamp}
-                    onChange={handleChange}
-                    className="input w-full max-w-xs"
-                  />
-                </label>
-                <label className="flex center flex-row items-center w-full">
-                  <div>Data:</div>
-                  {/* Not Sure we input this, might be on EAS.sol in the case of onchain attestations */}
-                  <input
-                    type="text"
-                    name="data"
-                    value={formValues.data}
-                    placeholder={formValues.data}
-                    className="input w-full"
-                    onChange={handleChange}
-                  />
-                </label>
+          <form onSubmit={handleSubmit} className="card m-5 flex-col gap-2 ">
+            <label className="flex center flex-row items-center flex-grow gap-3">
+              <Image src="/location.svg" alt="location_svg" width="50" height="50" />
+              <input
+                type="number"
+                name="coordinateInputX"
+                // placeholder={formValues.coordinateInputX.toString()}
+                className="input input-bordered w-full  bg-base-200 border-indigo-500 text-black"
+                value={latLng[0]}
+                onChange={handleChange}
+              />
+              <input
+                type="number"
+                name="coordinateInputY"
+                // placeholder={formValues.coordinateInputY.toString()}
+                className="input input-bordered w-full  bg-base-200  border-indigo-500 text-black"
+                value={latLng[1]}
+                onChange={handleChange}
+              />
+            </label>
+            <label className="flex center flex-row flex-grow items-center gap-2">
+              {/* Not Sure we input this, might be on EAS.sol in the case of onchain attestations */}
+              <Image src="/datetime.svg" alt="datetime" width="30" height="30" />
 
-                <input type="submit" value="Check-in" className="input btn btn-primary" />
-              </div>
-            </div>
+              <input
+                type="number"
+                name="timestamp"
+                value={formValues.timestamp}
+                onChange={handleChange}
+                className="input input-bordered w-full bg-base-200 border-indigo-500 text-black"
+              />
+            </label>
+            <label className="flex center flex-row items-center gap-2 w-full">
+              <Image src="/message-icon.svg" alt="location_svg" width="30" height="30" />
+              {/* Not Sure we input this, might be on EAS.sol in the case of onchain attestations */}
+              <input
+                type="text"
+                name="data"
+                value={formValues.data}
+                placeholder={formValues.data}
+                className="input input-bordered w-full bg-base-200 border-indigo-500 text-black"
+                onChange={handleChange}
+              />
+            </label>
+
+            <input type="submit" value="Check-in" className="input btn btn-primary bg-primary" />
           </form>
         </div>
       </div>
