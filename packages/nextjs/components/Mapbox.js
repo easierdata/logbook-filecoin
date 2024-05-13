@@ -15,6 +15,7 @@ export default function Mapbox({
   isCheckInActive = false,
   attestationsData = {},
   latLngAttestation = [],
+  setIsLoading = bool => bool,
 }) {
   const mapContainer = useRef(null);
   const map = useRef(null);
@@ -32,6 +33,9 @@ export default function Mapbox({
   //     .then((data) => setFakeUsers(data.results.map((user) => user?.picture?.thumbnail)));
   // },[]);
   console.log('[🧪 DEBUG]():', attestationsData)
+  useEffect(() => {
+    setIsLoading(false);
+  })
   useEffect(() => {
     if (!map.current) {
       map.current = new mapboxgl.Map({
@@ -103,7 +107,10 @@ export default function Mapbox({
 
       // bring up prop value to control map view
       setIsControlsActive && setIsControlsActive(true);
+
+      // done loading
     });
+
   });
   useEffect(() => {
     var mapCanvas = document.getElementsByClassName("mapboxgl-canvas")[0];
