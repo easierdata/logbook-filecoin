@@ -47,7 +47,7 @@ module.exports = {
           secondary: "#323f61",
           "secondary-content": "#F9FBFF",
           accent: "#4969A6",
-          "accent-content": "#F9FBFF",
+          "accent-content": "#000",
           neutral: "#F9FBFF",
           "neutral-content": "#385183",
           "base-100": "#D9D9D9",
@@ -78,7 +78,7 @@ module.exports = {
   theme: {
     extend: {
       boxShadow: {
-        center: "0 0 12px -2px rgb(0 0 0 / 0.05)",
+        center: "0 0 12px -2px rgb(a a a / 0.05)",
       },
       animation: {
         "pulse-fast": "pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite",

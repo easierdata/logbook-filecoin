@@ -42,3 +42,6 @@ button:disabled {
   border-radius: 50px;
   border-width: medium;
 }
+.mapboxgl-ctrl-logo {
+  display: none !important;
+}
