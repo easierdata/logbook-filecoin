@@ -1,6 +1,6 @@
 "use client";
 
-import React, { SyntheticEvent, useContext, useState } from "react";
+import React, { Dispatch, SyntheticEvent, useContext, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
@@ -10,7 +10,7 @@ import { EASContext } from "~~/components/EasContextProvider";
 
 // import Link from "next/link";
 
-const CheckinForm = ({ latLng = [0, 0] }) => {
+const CheckinForm = ({ latLng = [0, 0], setIsTxLoading }: { latLng: number[]; setIsTxLoading: Dispatch<boolean> }) => {
   // NextJS redirect
   const { push } = useRouter();
 
@@ -39,6 +39,9 @@ const CheckinForm = ({ latLng = [0, 0] }) => {
 
   // Set attestation from EAS api
   function handleSubmit(event: SyntheticEvent) {
+    event.preventDefault();
+    setIsTxLoading(true);
+
     if (!isReady) return; // notify user
 
     const encodedData = schemaEncoder.encodeData([
@@ -52,7 +55,6 @@ const CheckinForm = ({ latLng = [0, 0] }) => {
       { name: "message", value: formValues.data, type: "bytes32" },
     ]);
 
-    event.preventDefault();
     eas
       .attest({
         schema: schemaUID,
@@ -68,6 +70,7 @@ const CheckinForm = ({ latLng = [0, 0] }) => {
       })
       .then(newAttestationUID => {
         console.log("[🧪 DEBUG](newAttestationUID):", newAttestationUID);
+        setIsTxLoading(false);
         push(`/attestation/uid/${newAttestationUID}`);
       })
       .catch(err => {
