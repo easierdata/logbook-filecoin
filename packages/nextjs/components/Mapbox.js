@@ -1,31 +1,71 @@
 // eslint-disable-line import/no-webpack-loader-syntax
 import mapboxgl from "!mapbox-gl";
-import { blo } from "blo";
+// import { blo } from "blo";
 import "mapbox-gl/dist/mapbox-gl.css";
 import React, { useEffect, useRef, useState } from "react";
-import { useAccount } from "wagmi";
+
+// import { useAccount } from "wagmi";
 
 mapboxgl.accessToken = "pk.eyJ1Ijoicm9uY2h1Y2siLCJhIjoiY2x2Y2o5Z2drMGY3cjJrcGI4b2xsNzdtaCJ9.gi5RJ8qRhTSwfYuhVwhmvQ";
 
-export default function Mapbox({ setIsControlsActive, height = "70vh", setLatLng, isCheckInActive, attestationsData }) {
+export default function Mapbox({
+  setIsControlsActive = (bool) => bool,
+  height = "70vh",
+  setLatLng = (arr) => arr,
+  isCheckInActive = false,
+  attestationsData = {},
+  latLngAttestation = [],
+}) {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const markersRef = useRef([]);
   const [lng, setLng] = useState(-104.98716);
   const [lat, setLat] = useState(39.7323862);
-  const [zoom, setZoom] = useState(15);
+  const [zoom, setZoom] = useState(9);
+  // const [fakeUsers, setFakeUsers] = useState([]);
+  // const { address } = useAccount();
 
-  const { address } = useAccount();
+  // useEffect(() => {
+  //   fetch("https://randomuser.me/api/?results=50&inc=picture&noinfo")
+  //     .then((response) => response.json())
+  //     // 4. Setting *dogImage* to the image url that we received from the response above
+  //     .then((data) => setFakeUsers(data.results.map((user) => user?.picture?.thumbnail)));
+  // },[]);
+  console.log('[🧪 DEBUG]():', attestationsData)
   useEffect(() => {
     if (!map.current) {
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
         style: "mapbox://styles/mapbox/dark-v11",
-        center: [lng, lat],
+        center: latLngAttestation.length > 0 ? [latLngAttestation[1], latLngAttestation[0]] : [lng, lat],
         zoom: zoom,
+        attributionControl: false,
       });
     }
 
+    if (latLngAttestation.length > 0) {
+      markersRef.current.forEach((marker) => marker.remove());
+      markersRef.current = [];
+
+      // Set state variables
+      setLng(latLngAttestation[0]);
+      setLat(latLngAttestation[1]);
+      const el = document.createElement("img");
+      el.className = "marker";
+      el.src = "/eas_logo.png";
+      el.style.width = "40px";
+      el.style.height = "40px";
+      // Add a pin to the map
+      var newMarker = new mapboxgl.Marker(el).setLngLat([latLngAttestation[1],latLngAttestation[0]]).addTo(map.current);
+      // Animated flyTo to position marker at center of map
+      map.current.flyTo({
+        center: [latLngAttestation[1],latLngAttestation[0]],
+        essential: true,
+      });
+
+      // Add to state
+      markersRef.current.push(newMarker);
+    }
     // initialize map only once
     map.current?.on("move", () => {
       setLng(map.current.getCenter().lng.toFixed(4));
@@ -38,16 +78,17 @@ export default function Mapbox({ setIsControlsActive, height = "70vh", setLatLng
       markersRef.current = [];
 
       // Set state variables
-      setLng(e.lngLat.lng);
-      setLat(e.lngLat.lat);
+      setLng(latLngAttestation.length > 0 ? latLngAttestation[0] : e.lngLat.lng);
+      setLat(latLngAttestation.length > 0 ? latLngAttestation[0] : e.lngLat.lat);
 
       // set state on parent page (to pass on checkin)
       setLatLng && setLatLng([lat, lng]);
 
       const el = document.createElement("img");
       el.className = "marker";
-      el.src = blo(`0x${address}`);
-
+      el.src = "/eas_logo.png";
+      el.style.width = "40px";
+      el.style.height = "40px";
       // Add a pin to the map
       var newMarker = new mapboxgl.Marker(el).setLngLat(e.lngLat).addTo(map.current);
 
@@ -62,8 +103,6 @@ export default function Mapbox({ setIsControlsActive, height = "70vh", setLatLng
 
       // bring up prop value to control map view
       setIsControlsActive && setIsControlsActive(true);
-
-      // TODO: fix map center on checkin click.
     });
   });
   useEffect(() => {
@@ -88,24 +127,27 @@ export default function Mapbox({ setIsControlsActive, height = "70vh", setLatLng
     }
   }, [isCheckInActive, zoom, lat, lng]);
 
-  useEffect(() => {
-    if (attestationsData && map.current) {
-      attestationsData.attestations?.map((att) => {
-        const decodedAttestation = JSON.parse(att.decodedDataJson);
-        console.log("[🧪 DEBUG](att map):", JSON.parse(att.decodedDataJson));
-        const address = decodedAttestation[1].value.value;
-        const coordinate = decodedAttestation[0].value.value;
-        const el = document.createElement("img");
-        el.className = "marker";
-        el.src = blo(`0x${address}`);
+  // Add generated avatars and attestations to map.
+  // useEffect(() => {
+  //   if (attestationsData && attestationsData?.attestations && map.current /* && fakeUsers.length > 0 */) {
+  //     attestationsData.attestations?.map((att) => {
+  //       const decodedAttestation = JSON.parse(att.decodedDataJson);
+  //       console.log("[🧪 DEBUG](att map):", JSON.parse(att.decodedDataJson));
+  //       // const address = decodedAttestation[1].value.value;
+  //       const coordinate = decodedAttestation[0].value.value;
+  //       const el = document.createElement("img");
+  //       el.className = "marker";
+  //       el.src = "/eas_logo.png";
+  //       // el.src = fakeUsers[idx];
+  //       el.style.width = "40px";
+  //       el.style.height = "40px";
 
-        // Add a pin to the map
-        var newMarker = new mapboxgl.Marker(el).setLngLat([coordinate[1],coordinate[0]]).addTo(map.current);
-        markersRef.current.push(newMarker);
-
-      });
-    }
-  }, [attestationsData]);
+  //       // Add a pin to the map
+  //       var newMarker = new mapboxgl.Marker(el).setLngLat([coordinate[1], coordinate[0]]).addTo(map.current);
+  //       markersRef.current.push(newMarker);
+  //     });
+  //   }
+  // }, [attestationsData /*, fakeUsers*/]);
 
   return <div ref={mapContainer} className="card m-4 map-container" style={{ height }} />;
 }
