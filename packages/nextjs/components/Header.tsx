@@ -64,11 +64,12 @@ export const HeaderMenuLinks = () => {
  */
 export const Header = () => {
   return (
-    <div className="sticky lg:static top-0 navbar bg-base-100 min-h-0 flex-shrink-0 justify-between px-0 sm:px-2">
+    <div className="sticky lg:static top-0 navbar  min-h-0 flex-shrink-0 justify-between shadow-subtle">
       <div className="navbar-start w-auto lg:w-1/2">
         <div className="text-center block font-bold ml-2">
-          <Link href={"/"}>
-            <Image alt="astral_sparkels" height={30} width={30} src={"/astral_sparkels.svg"} />
+          <Link href={"/"} className="flex items-center space-x-2 ml-2">
+            <Image alt="astral_sparkels" height={30} width={30} className="text-black" src={"/astral_sparkels.svg"} />
+            <span className="text-black font-bold">Logbook</span>
           </Link>
         </div>
       </div>

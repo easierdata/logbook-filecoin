@@ -51,7 +51,11 @@ const CheckinForm = ({ latLng = [0, 0], setIsTxLoading }: { latLng: number[]; se
         type: "string[]",
       },
       { name: "subject", value: connectedAddress || "0xA332573D0520ee4653a878FA23774726811ae31A", type: "address" },
-      { name: "timestamp", value: formValues.timestamp, type: "uint256" },
+      {
+        name: "timestamp",
+        value: formValues.timestamp,
+        type: "uint256",
+      },
       { name: "message", value: formValues.data, type: "bytes32" },
     ]);
 
@@ -107,7 +111,7 @@ const CheckinForm = ({ latLng = [0, 0], setIsTxLoading }: { latLng: number[]; se
               <Image src="/datetime.svg" alt="datetime" width="30" height="30" />
 
               <input
-                type="number"
+                type="datetime-local"
                 name="timestamp"
                 value={formValues.timestamp}
                 onChange={handleChange}
