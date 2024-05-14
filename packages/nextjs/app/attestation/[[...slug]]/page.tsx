@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useQuery } from "@apollo/client";
 import { ethers } from "ethers";
 import type { NextPage } from "next";
+import { ArrowUpRightIcon, ClockIcon, DocumentTextIcon, MapPinIcon } from "@heroicons/react/24/outline";
 import Mapbox from "~~/components/Mapbox";
 import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
 import { GET_ATTESTATION } from "~~/services/queries";
@@ -50,6 +50,7 @@ const CheckinFrom: NextPage = () => {
         <div className="overflow-x-auto">
           <div className="flex flex-col">
             <div className="h-52">
+              <h1>Log Entry Details</h1>
               {data?.attestation?.decodedDataJson && (
                 <Mapbox
                   isCheckInActive={true}
@@ -59,7 +60,8 @@ const CheckinFrom: NextPage = () => {
                 />
               )}
             </div>
-            <table className="table bg-primary-content border-black text-lg ">
+
+            <table className="table bg-primary-content border-gray-400">
               {/* head */}
               {/* <thead>
               <tr>
@@ -72,24 +74,30 @@ const CheckinFrom: NextPage = () => {
             </thead> */}
 
               <tbody>
-                <tr className="border-black">
+                <tr className="border-gray-200">
                   <td>
-                    <Image src="/location.svg" alt="location_svg" width="30" height="30" />
+                    <MapPinIcon
+                      className="h-5 w-5 text-primary flex-shrink-0 flex-grow-0"
+                      style={{ flexBasis: "auto" }}
+                    />
                   </td>
                   <td>
+                    <strong className="text-sm">Lon: &nbsp;&nbsp;&nbsp; </strong>
                     {(data?.attestation?.decodedDataJson &&
                       JSON.parse(data?.attestation?.decodedDataJson)[0].value.value[0]) ||
                       "fetching"}
                   </td>
                   <td>
+                    <strong className="text-sm">Lat: &nbsp;&nbsp;&nbsp;</strong>
+
                     {(data?.attestation?.decodedDataJson &&
                       JSON.parse(data?.attestation?.decodedDataJson)[0].value.value[1]) ||
                       "fetching"}
                   </td>
                 </tr>
-                <tr className="border-black">
+                <tr className="border-gray-200">
                   <td>
-                    <Image src="/message.svg" alt="message" width="30" height="30" style={{ marginLeft: "4px" }} />
+                    <ClockIcon className="h-5 w-5 text-primary" />
                   </td>
                   <td>
                     {(data?.attestation?.decodedDataJson &&
@@ -97,15 +105,9 @@ const CheckinFrom: NextPage = () => {
                       "fetching"}
                   </td>
                 </tr>
-                <tr className="border-black">
+                <tr className="border-gray-200">
                   <td>
-                    <Image
-                      src="/datetime_icon.svg"
-                      alt="datetime_svg"
-                      style={{ marginLeft: "-8px" }}
-                      width="60"
-                      height="60"
-                    />
+                    <DocumentTextIcon className="h-5 w-5 text-primary" />
                   </td>
                   <td>
                     {(data?.attestation?.decodedDataJson &&
@@ -113,8 +115,10 @@ const CheckinFrom: NextPage = () => {
                       "fetching"}
                   </td>
                 </tr>
-                <tr className="border-black">
-                  <td>From</td>
+                <tr className="border-gray-200">
+                  <td className="text-sm">
+                    <strong>From:</strong>
+                  </td>
                   <td>
                     {(data?.attestation?.decodedDataJson &&
                       JSON.parse(data?.attestation?.decodedDataJson)[1].value.value.toString()) ||
@@ -127,7 +131,10 @@ const CheckinFrom: NextPage = () => {
                       target="_blank"
                       href={`https://${targetNetwork.name}.easscan.org/attestation/view/${attestationUid}` || ""}
                     >
-                      <div className="btn btn-primary">view on easscan</div>
+                      <div className="btn btn-outline btn-primary">
+                        View on EASScan
+                        <ArrowUpRightIcon className="ml-2 h-5 w-5" />
+                      </div>
                     </Link>
                   </td>
                 </tr>
