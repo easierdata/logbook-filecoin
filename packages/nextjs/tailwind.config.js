@@ -9,7 +9,7 @@ module.exports = {
     themes: [
       {
         light: {
-          primary: "#B799F7",
+          primary: "#570df8",
           "primary-content": "#F9FBFF",
           secondary: "#323f61",
           "secondary-content": "#F9FBFF",
@@ -17,7 +17,7 @@ module.exports = {
           "accent-content": "#F9FBFF",
           neutral: "#F9FBFF",
           "neutral-content": "#385183",
-          "base-100": "#D9D9D9",
+          "base-100": "#FFFFFF",
           "base-200": "#F9FBFF",
           "base-300": "#212638",
           "base-content": "#F9FBFF",
@@ -79,6 +79,7 @@ module.exports = {
     extend: {
       boxShadow: {
         center: "0 0 12px -2px rgb(a a a / 0.05)",
+        subtle: "0 2px 4px rgba(0, 0, 0, 0.1)",
       },
       animation: {
         "pulse-fast": "pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite",
