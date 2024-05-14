@@ -9,6 +9,7 @@ import type { NextPage } from "next";
 import easConfig from "~~/EAS.config";
 import CheckInControls from "~~/components/CheckInControls";
 import CheckinForm from "~~/components/CheckinForm";
+import Disclaimer from "~~/components/Disclaimer";
 import Loading from "~~/components/Loading";
 import { GET_ATTESTATIONS } from "~~/services/queries";
 
@@ -21,6 +22,7 @@ const Home: NextPage = () => {
   const [latLng, setLatLng] = useState([0, 0]);
   const [isLoading, setIsLoading] = useState(true);
   const [isTxLoading, setIsTxLoading] = useState(false);
+  const [isDisclaimer, setIsDisclaimer] = useState(true);
 
   const {
     loading,
@@ -39,6 +41,7 @@ const Home: NextPage = () => {
   return (
     <div className="">
       {(isLoading || isTxLoading) && <Loading />}
+      {isCheckInActive && isDisclaimer && <Disclaimer setIsDisclaimer={setIsDisclaimer} />}
       <Mapbox
         setIsControlsActive={setIsControlsActive}
         setLatLng={setLatLng}
