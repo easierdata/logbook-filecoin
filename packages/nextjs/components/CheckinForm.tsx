@@ -105,7 +105,7 @@ const CheckinForm = ({ latLng = [0, 0], setIsTxLoading }: { latLng: number[]; se
           <label className="flex flex-row items-center gap-2">
             <ClockIcon className="h-5 w-5 text-primary" />
             <input
-              type="datetime-local"
+              type="number"
               name="timestamp"
               value={formValues.timestamp}
               onChange={handleChange}
