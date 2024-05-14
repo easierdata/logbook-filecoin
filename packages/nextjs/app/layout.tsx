@@ -10,7 +10,7 @@ const baseUrl = process.env.VERCEL_URL
 const imageUrl = `${baseUrl}/thumbnail.jpg`;
 
 const title = "Astral Logbook";
-const titleTemplate = "%s | Astral Check-in";
+const titleTemplate = "%s | Astral Logbook";
 const description = "Built with 🏗 Scaffold-ETH 2";
 
 export const metadata: Metadata = {
