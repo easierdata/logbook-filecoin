@@ -35,6 +35,10 @@ p {
   background-color: red;
 } */
 
+/* date indicator */
+::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
 /* mapbox */
 .mapboxgl-marker {
   /* background-origin: border-box;
