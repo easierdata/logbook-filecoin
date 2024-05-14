@@ -55,11 +55,12 @@ export default function Mapbox({
       // Set state variables
       setLng(latLngAttestation[0]);
       setLat(latLngAttestation[1]);
-      const el = document.createElement("img");
+      const el = document.createElement("div");
       el.className = "marker";
-      el.src = "/eas_logo.png";
-      el.style.width = "40px";
-      el.style.height = "40px";
+      el.className = "bg-primary"
+      // el.src = "/eas_logo.png";
+      // el.style.width = "40px";
+      // el.style.height = "40px";
       // Add a pin to the map
       var newMarker = new mapboxgl.Marker(el).setLngLat([latLngAttestation[1],latLngAttestation[0]]).addTo(map.current);
       // Animated flyTo to position marker at center of map
@@ -89,11 +90,18 @@ export default function Mapbox({
       // set state on parent page (to pass on checkin)
       setLatLng && setLatLng([lat, lng]);
 
-      const el = document.createElement("img");
+
+      const el = document.createElement("div");
       el.className = "marker";
-      el.src = "/eas_logo.png";
-      el.style.width = "40px";
-      el.style.height = "40px";
+      el.className = "bg-primary";
+
+
+      // const el = document.createElement("img");
+      // el.className = "marker";
+      // el.src = "/eas_logo.png";
+      // el.style.width = "30px";
+      // el.style.height = "30px";
+      // el.style.borderRadius = "50%";
       // Add a pin to the map
       var newMarker = new mapboxgl.Marker(el).setLngLat(e.lngLat).addTo(map.current);
 
@@ -118,7 +126,7 @@ export default function Mapbox({
     if (!map.current) {
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
-        style: "mapbox://styles/mapbox/dark-v11",
+        style: "mapbox://styles/mapbox/standard",
         center: [lng, lat],
         zoom: zoom,
       });
@@ -157,5 +165,5 @@ export default function Mapbox({
   //   }
   // }, [attestationsData /*, fakeUsers*/]);
 
-  return <div ref={mapContainer} className="card m-4 map-container" style={{ height }} />;
+  return <div ref={mapContainer} className="card mx-4 mt-4 map-container" style={{ height }} />;
 }
