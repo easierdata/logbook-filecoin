@@ -13,7 +13,7 @@ export default function Mapbox({
   height = "70vh",
   setLatLng = arr => arr,
   isCheckInActive = false,
-  attestationsData = {},
+  // attestationsData = {},
   latLngAttestation = [],
   setIsLoading = bool => bool,
 }) {
@@ -29,8 +29,13 @@ export default function Mapbox({
       console.log("showPosition called");
       const lon = position.coords.longitude;
       const lat = position.coords.latitude;
-      setLng(lon);
-      setLat(lat);
+     
+      // Fly to center without setting lat,lon state
+      map?.current?.flyTo({
+        center: [lat, lon],
+        essential: true,
+      });
+      
       console.log("✔📍 User coordinates set:[", lon, lat, "]");
     }
 
@@ -65,10 +70,13 @@ export default function Mapbox({
     }
   }, []);
 
+  // Loading state side effect
   useEffect(() => {
+    console.log('[🧪 DEBUG](loading useEffect)')
     setIsLoading(false);
   }, [setIsLoading]);
 
+  // Init map side effect
   useEffect(() => {
     if (!map.current) {
       map.current = new mapboxgl.Map({
@@ -154,6 +162,7 @@ export default function Mapbox({
     });
   }, [latLngAttestation, lng, lat, zoom, setLatLng, setIsControlsActive]);
 
+  // Canvas resize side effect
   useEffect(() => {
     var mapCanvas = document.getElementsByClassName("mapboxgl-canvas")[0];
     if (!map.current) {
@@ -176,38 +185,6 @@ export default function Mapbox({
     }
   }, [isCheckInActive, zoom, lat, lng]);
 
-  // Set updated map center based on user location
-  useEffect(() => {
-    if (map.current) {
-      console.log(`[${new Date().toISOString()}] Updating map center to:`, lng, lat);
-      map.current.flyTo({
-        center: [lng, lat],
-        essential: true
-      });
-    }
-  }, [lng, lat]);
-
-//   // Add generated avatars and attestations to map.
-//   useEffect(() => {
-//     if (attestationsData && attestationsData?.attestations && map.current /* && fakeUsers.length > 0 */) {
-//       attestationsData.attestations?.map(att => {
-//         const decodedAttestation = JSON.parse(att.decodedDataJson);
-//         console.log("[🧪 DEBUG](att map):", JSON.parse(att.decodedDataJson));
-//         // const address = decodedAttestation[1].value.value;
-//         const coordinate = decodedAttestation[0].value.value;
-//         const el = document.createElement("img");
-//         el.className = "marker";
-//         el.src = "/eas_logo.png";
-//         // el.src = fakeUsers[idx];
-//         el.style.width = "40px";
-//         el.style.height = "40px";
-
-//         // Add a pin to the map
-//         var newMarker = new mapboxgl.Marker(el).setLngLat([coordinate[1], coordinate[0]]).addTo(map.current);
-//         markersRef.current.push(newMarker);
-//       });
-//     }
-//   }, [attestationsData /*, fakeUsers*/]);
 
   return <div ref={mapContainer} className="card mx-4 mt-4 map-container" style={{ height }} />;
 }
