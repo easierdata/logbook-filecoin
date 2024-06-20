@@ -31,13 +31,34 @@ const CheckinFrom: NextPage = () => {
   const hexToDate = (hex: string) => {
     const timeInSeconds = parseInt(hex, 16);
     // convert to miliseconds
-    const timeInMiliseconds = timeInSeconds * 1000;
-    const currentTime = new Date(timeInMiliseconds).toLocaleDateString();
-    return currentTime;
+    const timeInMilliseconds = timeInSeconds * 1000;
+    const date = new Date(timeInMilliseconds);
+
+    const dateOptions: Intl.DateTimeFormatOptions = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+
+    const timeOptions: Intl.DateTimeFormatOptions = {
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    };
+
+    const formattedDate = date.toLocaleDateString(undefined, dateOptions);
+    const formattedTime = date.toLocaleTimeString(undefined, timeOptions);
+
+    return `${formattedDate}, ${formattedTime}`;
   };
   {
     console.log("[🧪 DEBUG](data?.attestation):", data?.attestation);
   }
+  const parsedLocation = (location: string) => {
+    return location.split(',');
+  } 
+
+  
 
   return (
     // TODO: handle error/ no attestation.
@@ -45,7 +66,8 @@ const CheckinFrom: NextPage = () => {
       {console.log(
         "[🧪 DEBUG](decodedDataJson):",
         data?.attestation?.decodedDataJson && JSON.parse(data?.attestation?.decodedDataJson),
-      )}
+      )
+      }
       <div className="hero bg-base-200 text-black">
         <div className="overflow-x-auto">
           <div className="flex flex-col">
@@ -55,7 +77,7 @@ const CheckinFrom: NextPage = () => {
                 <Mapbox
                   isCheckInActive={true}
                   latLngAttestation={
-                    data?.attestation?.decodedDataJson && JSON.parse(data?.attestation?.decodedDataJson)[0].value.value
+                    data?.attestation?.decodedDataJson && parsedLocation(ethers.toUtf8String(JSON.parse(data?.attestation?.decodedDataJson)[3].value.value))
                   }
                 />
               )}
@@ -81,17 +103,28 @@ const CheckinFrom: NextPage = () => {
                       style={{ flexBasis: "auto" }}
                     />
                   </td>
+                  {/* <td>
+                    { (data?.attestation?.decodedDataJson &&
+                      hexToDate(JSON.parse(data?.attestation?.decodedDataJson)[0].value.value.hex.toString())) || // should filter by `name` rather than specify by index imo
+                      "fetching"}
+                  </td> */}
+
+
+
+
+
+
                   <td>
                     <strong className="text-sm">Lon: &nbsp;&nbsp;&nbsp; </strong>
                     {(data?.attestation?.decodedDataJson &&
-                      JSON.parse(data?.attestation?.decodedDataJson)[0].value.value[0]) ||
+                      parsedLocation(ethers.toUtf8String(JSON.parse(data?.attestation?.decodedDataJson)[3].value.value))[0]) ||
                       "fetching"}
                   </td>
                   <td>
                     <strong className="text-sm">Lat: &nbsp;&nbsp;&nbsp;</strong>
 
                     {(data?.attestation?.decodedDataJson &&
-                      JSON.parse(data?.attestation?.decodedDataJson)[0].value.value[1]) ||
+                      parsedLocation(ethers.toUtf8String(JSON.parse(data?.attestation?.decodedDataJson)[3].value.value))[1]) ||
                       "fetching"}
                   </td>
                 </tr>
@@ -100,8 +133,8 @@ const CheckinFrom: NextPage = () => {
                     <ClockIcon className="h-5 w-5 text-primary" />
                   </td>
                   <td>
-                    {(data?.attestation?.decodedDataJson &&
-                      ethers.toUtf8String(JSON.parse(data?.attestation?.decodedDataJson)[3].value.value)) ||
+                  { (data?.attestation?.decodedDataJson &&
+                      hexToDate(JSON.parse(data?.attestation?.decodedDataJson)[0].value.value.hex.toString())) || // should filter by `name` rather than specify by index imo
                       "fetching"}
                   </td>
                 </tr>
@@ -110,8 +143,8 @@ const CheckinFrom: NextPage = () => {
                     <DocumentTextIcon className="h-5 w-5 text-primary" />
                   </td>
                   <td>
-                    {(data?.attestation?.decodedDataJson &&
-                      hexToDate(JSON.parse(data?.attestation?.decodedDataJson)[2].value.value.hex.toString())) ||
+                    { (data?.attestation?.decodedDataJson &&
+                      JSON.parse(data?.attestation?.decodedDataJson)[8].value.value) || // should filter by `name` rather than specify by index imo
                       "fetching"}
                   </td>
                 </tr>
@@ -121,7 +154,7 @@ const CheckinFrom: NextPage = () => {
                   </td>
                   <td>
                     {(data?.attestation?.decodedDataJson &&
-                      JSON.parse(data?.attestation?.decodedDataJson)[1].value.value.toString()) ||
+                      data?.attestation?.attester) ||
                       "fetching"}
                   </td>
                 </tr>
