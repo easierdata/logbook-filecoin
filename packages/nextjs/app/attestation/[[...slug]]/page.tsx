@@ -101,7 +101,7 @@ const CheckinFrom: NextPage = () => {
                   </td>
                   <td>
                     {(data?.attestation?.decodedDataJson &&
-                      ethers.decodeBytes32String(JSON.parse(data?.attestation?.decodedDataJson)[3].value.value)) ||
+                      ethers.toUtf8String(JSON.parse(data?.attestation?.decodedDataJson)[3].value.value)) ||
                       "fetching"}
                   </td>
                 </tr>
