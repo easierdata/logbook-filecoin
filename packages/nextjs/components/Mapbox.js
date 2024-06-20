@@ -32,7 +32,7 @@ export default function Mapbox({
      
       // Fly to center without setting lat,lon state
       map?.current?.flyTo({
-        center: [lat, lon],
+        center: [lon, lat],
         essential: true,
       });
       
