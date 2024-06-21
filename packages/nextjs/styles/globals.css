@@ -64,3 +64,48 @@ p {
 .mapboxgl-ctrl-logo {
   display: none !important;
 }
+
+/* Animated Sparkles */
+
+@keyframes popInOut {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.svg-container {
+  width: 200px;
+  height: 200px;
+}
+
+.svg-container svg {
+  width: 100%;
+  height: 100%;
+}
+
+.animated-svg .animated-path {
+  animation: popInOut 2s infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.animated-svg .path1 {
+  animation-delay: 0s;
+}
+
+.animated-svg .path2 {
+  animation-delay: 0.6s;
+}
+
+.animated-svg .path3 {
+  animation-delay: 1s;
+}
+
+.animated-svg .path4 {
+  animation-delay: 1.5s;
+}

@@ -54,6 +54,7 @@
     "mapbox-gl": "^3.3.0",
     "react": "latest",
     "react-copy-to-clipboard": "^5.1.0",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "react-svg": "^16.1.34"
   }
 }
