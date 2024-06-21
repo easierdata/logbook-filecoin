@@ -23,6 +23,11 @@ p {
   margin: 1rem 0;
 }
 
+p.tx-loading {
+  color: black;
+  size: 16px;
+}
+
 .btn {
   @apply shadow-md;
 }

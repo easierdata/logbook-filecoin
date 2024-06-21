@@ -40,7 +40,7 @@ const Home: NextPage = () => {
 
   return (
     <div className="">
-      {(isLoading || isTxLoading) && <Loading />}
+      {(isLoading || isTxLoading) && <Loading txLoading={isTxLoading} />}
       {isCheckInActive && isDisclaimer && <Disclaimer setIsDisclaimer={setIsDisclaimer} />}
       <Mapbox
         setIsControlsActive={setIsControlsActive}
