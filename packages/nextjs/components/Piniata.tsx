@@ -41,11 +41,18 @@ export default function PintataUpload() {
   };
 
   return (
-    <main className="w-full min-h-screen m-auto flex flex-col justify-center items-center">
-      <input type="file" id="file" ref={inputFile} onChange={handleChange} />
-      <button disabled={uploading} onClick={() => inputFile.current?.click()}>
-        {uploading ? "Uploading..." : "Upload"}
-      </button>
-    </main>
+    <div className="relative">
+      <label className="flex flex-row items-center gap-2 w-full">
+        <input
+          type="file"
+          ref={inputFile}
+          onChange={handleChange}
+          name="file"
+          // value={cid}
+          className="input input-bordered file-input file-input-primary w-full bg-base-200 border-indigo-500 text-black p-0"
+        />
+      </label>
+      {uploading && <progress className="progress w-56 progress-primary absolute mt-1 ml-1" />}
+    </div>
   );
 }
