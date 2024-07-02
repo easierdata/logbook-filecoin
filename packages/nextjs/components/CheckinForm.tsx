@@ -85,7 +85,7 @@ const CheckinForm = ({ latLng = [0, 0], setIsTxLoading }: { latLng: number[]; se
       },
       {
         name: "locationType",
-        value: "DecimalDegrees", // hard coded for v0.1
+        value: "DecimalDegrees<string>", // hard coded for v0.1
         type: "string",
       },
       {
