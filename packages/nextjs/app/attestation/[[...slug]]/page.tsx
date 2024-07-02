@@ -31,9 +31,25 @@ const CheckinFrom: NextPage = () => {
   const hexToDate = (hex: string) => {
     const timeInSeconds = parseInt(hex, 16);
     // convert to miliseconds
-    const timeInMiliseconds = timeInSeconds * 1000;
-    const currentTime = new Date(timeInMiliseconds).toLocaleDateString();
-    return currentTime;
+    const timeInMilliseconds = timeInSeconds * 1000;
+    const date = new Date(timeInMilliseconds);
+
+    const dateOptions: Intl.DateTimeFormatOptions = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+
+    const timeOptions: Intl.DateTimeFormatOptions = {
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    };
+
+    const formattedDate = date.toLocaleDateString(undefined, dateOptions);
+    const formattedTime = date.toLocaleTimeString(undefined, timeOptions);
+
+    return `${formattedDate}, ${formattedTime}`;
   };
   {
     console.log("[🧪 DEBUG](data?.attestation):", data?.attestation);

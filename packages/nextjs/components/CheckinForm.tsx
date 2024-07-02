@@ -2,11 +2,16 @@
 
 import React, { Dispatch, SyntheticEvent, useContext, useState } from "react";
 import { useRouter } from "next/navigation";
+import "../styles/custom-datepicker.css";
 import { SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import { useAccount } from "wagmi";
 import { ClockIcon, DocumentTextIcon, MapPinIcon } from "@heroicons/react/24/outline";
 import easConfig from "~~/EAS.config";
 import { EASContext } from "~~/components/EasContextProvider";
+
+// To add DaisyUI styles
 
 // import Link from "next/link";
 
@@ -15,13 +20,23 @@ const CheckinForm = ({ latLng = [0, 0], setIsTxLoading }: { latLng: number[]; se
   const { push } = useRouter();
 
   const { address: connectedAddress } = useAccount(); //get address from wagmi
-  const nowInSeconds = Math.floor(Date.now() / 1000);
   const [formValues, setFormValues] = useState({
     coordinateInputX: latLng[0], // to be picked up by prop
     coordinateInputY: latLng[1], // to be picked up by prop
-    timestamp: nowInSeconds,
+    timestamp: new Date(),
     data: "",
   });
+
+  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+
+  const handleDateChange = (date: Date | null) => {
+    if (date) {
+      setSelectedDate(date);
+      handleChange({ target: { name: "timestamp", value: date } });
+    } else {
+      setSelectedDate(null);
+    }
+  };
 
   // Use EAS SDK
   const { eas, isReady } = useContext(EASContext);
@@ -32,10 +47,10 @@ const CheckinForm = ({ latLng = [0, 0], setIsTxLoading }: { latLng: number[]; se
 
   const schemaUID = easConfig.SCHEMA_UID_SEPOLIA; // TODO: read according to chainId
 
-  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-    event.preventDefault();
+  const handleChange = (event: { preventDefault?: () => void; target: { name: string; value: any } }) => {
+    if (event.preventDefault) event.preventDefault();
     setFormValues({ ...formValues, [event.target.name]: event.target.value });
-  }
+  };
 
   // Set attestation from EAS api
   function handleSubmit(event: SyntheticEvent) {
@@ -53,11 +68,13 @@ const CheckinForm = ({ latLng = [0, 0], setIsTxLoading }: { latLng: number[]; se
       { name: "subject", value: connectedAddress || "0xA332573D0520ee4653a878FA23774726811ae31A", type: "address" },
       {
         name: "timestamp",
-        value: formValues.timestamp,
+        value: Math.floor(formValues.timestamp.getTime() / 1000), // here we convert to nowInSeconds
         type: "uint256",
       },
       { name: "message", value: formValues.data, type: "bytes32" },
     ]);
+
+    console.log("value", Math.floor(formValues.timestamp.getTime() / 1000));
 
     eas
       .attest({
@@ -81,6 +98,9 @@ const CheckinForm = ({ latLng = [0, 0], setIsTxLoading }: { latLng: number[]; se
         console.log("[🧪 DEBUG](err):", err);
       });
   }
+
+  console.log("TIMESTAMP!", formValues.timestamp);
+
   return (
     <div className="flex items-center flex-col w-full flex-grow">
       <div className="flex-grow center w-full">
@@ -104,11 +124,12 @@ const CheckinForm = ({ latLng = [0, 0], setIsTxLoading }: { latLng: number[]; se
           </label>
           <label className="flex flex-row items-center gap-2">
             <ClockIcon className="h-5 w-5 text-primary" />
-            <input
-              type="number"
-              name="timestamp"
-              value={formValues.timestamp}
-              onChange={handleChange}
+            <DatePicker
+              selected={selectedDate}
+              onChange={handleDateChange}
+              showTimeSelect
+              timeIntervals={1}
+              dateFormat="Pp"
               className="input input-bordered w-full bg-base-200 border-indigo-500 text-black"
             />
           </label>
