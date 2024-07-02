@@ -3,13 +3,16 @@
 import React, { Dispatch, SyntheticEvent, useContext, useState } from "react";
 import { useRouter } from "next/navigation";
 import "../styles/custom-datepicker.css";
+import "../styles/custom-datepicker.css";
 import { SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
+import { ethers } from "ethers";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { useAccount } from "wagmi";
 import { ClockIcon, DocumentTextIcon, MapPinIcon } from "@heroicons/react/24/outline";
 import easConfig from "~~/EAS.config";
 import { EASContext } from "~~/components/EasContextProvider";
+
+// To add DaisyUI styles
 
 // To add DaisyUI styles
 
@@ -18,8 +21,6 @@ import { EASContext } from "~~/components/EasContextProvider";
 const CheckinForm = ({ latLng = [0, 0], setIsTxLoading }: { latLng: number[]; setIsTxLoading: Dispatch<boolean> }) => {
   // NextJS redirect
   const { push } = useRouter();
-
-  const { address: connectedAddress } = useAccount(); //get address from wagmi
   const [formValues, setFormValues] = useState({
     coordinateInputX: latLng[0], // to be picked up by prop
     coordinateInputY: latLng[1], // to be picked up by prop
@@ -43,7 +44,7 @@ const CheckinForm = ({ latLng = [0, 0], setIsTxLoading }: { latLng: number[]; se
   // const [attestation, setAttestation] = useState<Attestation>();
 
   // Initialize SchemaEncoder with the schema string
-  const schemaEncoder = new SchemaEncoder("string[] coordinates,address subject,uint256 timestamp,bytes32 message");
+  const schemaEncoder = new SchemaEncoder(easConfig.RAW_SCHEMA_STRING);
 
   const schemaUID = easConfig.SCHEMA_UID_SEPOLIA; // TODO: read according to chainId
 
@@ -59,22 +60,64 @@ const CheckinForm = ({ latLng = [0, 0], setIsTxLoading }: { latLng: number[]; se
 
     if (!isReady) return; // notify user
 
+    /* "
+    
+    uint256 eventTimestamp,
+    string srs,
+    string locationType,
+    bytes location,
+    string[] recipeType,
+    bytes[] recipePayload,
+    string[] mediaType,
+    bytes[] mediaData,
+    string memo", */
+
     const encodedData = schemaEncoder.encodeData([
       {
-        name: "coordinates",
-        value: [formValues.coordinateInputX.toString(), formValues.coordinateInputY.toString()],
-        type: "string[]",
-      },
-      { name: "subject", value: connectedAddress || "0xA332573D0520ee4653a878FA23774726811ae31A", type: "address" },
-      {
-        name: "timestamp",
+        name: "eventTimestamp",
         value: Math.floor(formValues.timestamp.getTime() / 1000), // here we convert to nowInSeconds
         type: "uint256",
       },
-      { name: "message", value: formValues.data, type: "bytes32" },
+      {
+        name: "srs",
+        value: "EPSG:4326", // hard coded for v0.1
+        type: "string",
+      },
+      {
+        name: "locationType",
+        value: "DecimalDegrees", // hard coded for v0.1
+        type: "string",
+      },
+      {
+        name: "location",
+        value: ethers.toUtf8Bytes(
+          `${formValues.coordinateInputX.toString()},${formValues.coordinateInputY.toString()}`,
+        ),
+        type: "bytes",
+      },
+      {
+        name: "recipeType",
+        value: ["NEED A STRING ARRAY HERE"],
+        type: "string[]",
+      },
+      {
+        name: "recipePayload",
+        value: [ethers.toUtf8Bytes("NEED A BYTES ARRAY HERE")],
+        type: "bytes[]",
+      },
+      {
+        //  @RON: Here is where we put in the IPFS hashes
+        name: "mediaType",
+        value: ["ipfs:image/png"], // storageSystem:MIMEtype
+        type: "string[]",
+      },
+      {
+        name: "mediaData",
+        value: [ethers.toUtf8Bytes("cid")], // CID, encoded as bytes somehow
+        type: "bytes[]",
+      },
+      { name: "memo", value: formValues.data, type: "string" },
     ]);
-
-    console.log("value", Math.floor(formValues.timestamp.getTime() / 1000));
 
     eas
       .attest({

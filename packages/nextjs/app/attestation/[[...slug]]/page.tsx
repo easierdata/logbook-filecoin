@@ -54,6 +54,9 @@ const CheckinFrom: NextPage = () => {
   {
     console.log("[🧪 DEBUG](data?.attestation):", data?.attestation);
   }
+  const parsedLocation = (location: string) => {
+    return location.split(",");
+  };
 
   return (
     // TODO: handle error/ no attestation.
@@ -71,7 +74,8 @@ const CheckinFrom: NextPage = () => {
                 <Mapbox
                   isCheckInActive={true}
                   latLngAttestation={
-                    data?.attestation?.decodedDataJson && JSON.parse(data?.attestation?.decodedDataJson)[0].value.value
+                    data?.attestation?.decodedDataJson &&
+                    parsedLocation(ethers.toUtf8String(JSON.parse(data?.attestation?.decodedDataJson)[3].value.value))
                   }
                 />
               )}
@@ -97,17 +101,27 @@ const CheckinFrom: NextPage = () => {
                       style={{ flexBasis: "auto" }}
                     />
                   </td>
+                  {/* <td>
+                    { (data?.attestation?.decodedDataJson &&
+                      hexToDate(JSON.parse(data?.attestation?.decodedDataJson)[0].value.value.hex.toString())) || // should filter by `name` rather than specify by index imo
+                      "fetching"}
+                  </td> */}
+
                   <td>
                     <strong className="text-sm">Lon: &nbsp;&nbsp;&nbsp; </strong>
                     {(data?.attestation?.decodedDataJson &&
-                      JSON.parse(data?.attestation?.decodedDataJson)[0].value.value[0]) ||
+                      parsedLocation(
+                        ethers.toUtf8String(JSON.parse(data?.attestation?.decodedDataJson)[3].value.value),
+                      )[0]) ||
                       "fetching"}
                   </td>
                   <td>
                     <strong className="text-sm">Lat: &nbsp;&nbsp;&nbsp;</strong>
 
                     {(data?.attestation?.decodedDataJson &&
-                      JSON.parse(data?.attestation?.decodedDataJson)[0].value.value[1]) ||
+                      parsedLocation(
+                        ethers.toUtf8String(JSON.parse(data?.attestation?.decodedDataJson)[3].value.value),
+                      )[1]) ||
                       "fetching"}
                   </td>
                 </tr>
@@ -117,7 +131,7 @@ const CheckinFrom: NextPage = () => {
                   </td>
                   <td>
                     {(data?.attestation?.decodedDataJson &&
-                      ethers.decodeBytes32String(JSON.parse(data?.attestation?.decodedDataJson)[3].value.value)) ||
+                      hexToDate(JSON.parse(data?.attestation?.decodedDataJson)[0].value.value.hex.toString())) || // should filter by `name` rather than specify by index imo
                       "fetching"}
                   </td>
                 </tr>
@@ -127,7 +141,7 @@ const CheckinFrom: NextPage = () => {
                   </td>
                   <td>
                     {(data?.attestation?.decodedDataJson &&
-                      hexToDate(JSON.parse(data?.attestation?.decodedDataJson)[2].value.value.hex.toString())) ||
+                      JSON.parse(data?.attestation?.decodedDataJson)[8].value.value) || // should filter by `name` rather than specify by index imo
                       "fetching"}
                   </td>
                 </tr>
@@ -135,11 +149,7 @@ const CheckinFrom: NextPage = () => {
                   <td className="text-sm">
                     <strong>From:</strong>
                   </td>
-                  <td>
-                    {(data?.attestation?.decodedDataJson &&
-                      JSON.parse(data?.attestation?.decodedDataJson)[1].value.value.toString()) ||
-                      "fetching"}
-                  </td>
+                  <td>{(data?.attestation?.decodedDataJson && data?.attestation?.attester) || "fetching"}</td>
                 </tr>
                 <tr>
                   <td>
