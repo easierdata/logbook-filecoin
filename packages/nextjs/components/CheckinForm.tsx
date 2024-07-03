@@ -2,40 +2,56 @@
 
 import React, { Dispatch, SyntheticEvent, useContext, useState } from "react";
 import { useRouter } from "next/navigation";
+import "../styles/custom-datepicker.css";
+import "../styles/custom-datepicker.css";
 import { SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
-import { useAccount } from "wagmi";
+import { ethers } from "ethers";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import { ClockIcon, DocumentTextIcon, MapPinIcon } from "@heroicons/react/24/outline";
 import easConfig from "~~/EAS.config";
 import { EASContext } from "~~/components/EasContextProvider";
+
+// To add DaisyUI styles
+
+// To add DaisyUI styles
 
 // import Link from "next/link";
 
 const CheckinForm = ({ latLng = [0, 0], setIsTxLoading }: { latLng: number[]; setIsTxLoading: Dispatch<boolean> }) => {
   // NextJS redirect
   const { push } = useRouter();
-
-  const { address: connectedAddress } = useAccount(); //get address from wagmi
-  const nowInSeconds = Math.floor(Date.now() / 1000);
   const [formValues, setFormValues] = useState({
     coordinateInputX: latLng[0], // to be picked up by prop
     coordinateInputY: latLng[1], // to be picked up by prop
-    timestamp: nowInSeconds,
+    timestamp: new Date(),
     data: "",
   });
+
+  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+
+  const handleDateChange = (date: Date | null) => {
+    if (date) {
+      setSelectedDate(date);
+      handleChange({ target: { name: "timestamp", value: date } });
+    } else {
+      setSelectedDate(null);
+    }
+  };
 
   // Use EAS SDK
   const { eas, isReady } = useContext(EASContext);
   // const [attestation, setAttestation] = useState<Attestation>();
 
   // Initialize SchemaEncoder with the schema string
-  const schemaEncoder = new SchemaEncoder("string[] coordinates,address subject,uint256 timestamp,bytes32 message");
+  const schemaEncoder = new SchemaEncoder(easConfig.RAW_SCHEMA_STRING);
 
   const schemaUID = easConfig.SCHEMA_UID_SEPOLIA; // TODO: read according to chainId
 
-  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-    event.preventDefault();
+  const handleChange = (event: { preventDefault?: () => void; target: { name: string; value: any } }) => {
+    if (event.preventDefault) event.preventDefault();
     setFormValues({ ...formValues, [event.target.name]: event.target.value });
-  }
+  };
 
   // Set attestation from EAS api
   function handleSubmit(event: SyntheticEvent) {
@@ -44,19 +60,63 @@ const CheckinForm = ({ latLng = [0, 0], setIsTxLoading }: { latLng: number[]; se
 
     if (!isReady) return; // notify user
 
+    /* "
+    
+    uint256 eventTimestamp,
+    string srs,
+    string locationType,
+    bytes location,
+    string[] recipeType,
+    bytes[] recipePayload,
+    string[] mediaType,
+    bytes[] mediaData,
+    string memo", */
+
     const encodedData = schemaEncoder.encodeData([
       {
-        name: "coordinates",
-        value: [formValues.coordinateInputX.toString(), formValues.coordinateInputY.toString()],
-        type: "string[]",
-      },
-      { name: "subject", value: connectedAddress || "0xA332573D0520ee4653a878FA23774726811ae31A", type: "address" },
-      {
-        name: "timestamp",
-        value: formValues.timestamp,
+        name: "eventTimestamp",
+        value: Math.floor(formValues.timestamp.getTime() / 1000), // here we convert to nowInSeconds
         type: "uint256",
       },
-      { name: "message", value: formValues.data, type: "bytes32" },
+      {
+        name: "srs",
+        value: "EPSG:4326", // hard coded for v0.1
+        type: "string",
+      },
+      {
+        name: "locationType",
+        value: "DecimalDegrees<string>", // hard coded for v0.1
+        type: "string",
+      },
+      {
+        name: "location",
+        value: ethers.toUtf8Bytes(
+          `${formValues.coordinateInputX.toString()},${formValues.coordinateInputY.toString()}`,
+        ),
+        type: "bytes",
+      },
+      {
+        name: "recipeType",
+        value: ["NEED A STRING ARRAY HERE"],
+        type: "string[]",
+      },
+      {
+        name: "recipePayload",
+        value: [ethers.toUtf8Bytes("NEED A BYTES ARRAY HERE")],
+        type: "bytes[]",
+      },
+      {
+        //  @RON: Here is where we put in the IPFS hashes
+        name: "mediaType",
+        value: ["ipfs:image/png"], // storageSystem:MIMEtype
+        type: "string[]",
+      },
+      {
+        name: "mediaData",
+        value: [ethers.toUtf8Bytes("cid")], // CID, encoded as bytes somehow
+        type: "bytes[]",
+      },
+      { name: "memo", value: formValues.data, type: "string" },
     ]);
 
     eas
@@ -81,6 +141,9 @@ const CheckinForm = ({ latLng = [0, 0], setIsTxLoading }: { latLng: number[]; se
         console.log("[🧪 DEBUG](err):", err);
       });
   }
+
+  console.log("TIMESTAMP!", formValues.timestamp);
+
   return (
     <div className="flex items-center flex-col w-full flex-grow">
       <div className="flex-grow center w-full">
@@ -104,11 +167,12 @@ const CheckinForm = ({ latLng = [0, 0], setIsTxLoading }: { latLng: number[]; se
           </label>
           <label className="flex flex-row items-center gap-2">
             <ClockIcon className="h-5 w-5 text-primary" />
-            <input
-              type="number"
-              name="timestamp"
-              value={formValues.timestamp}
-              onChange={handleChange}
+            <DatePicker
+              selected={selectedDate}
+              onChange={handleDateChange}
+              showTimeSelect
+              timeIntervals={1}
+              dateFormat="Pp"
               className="input input-bordered w-full bg-base-200 border-indigo-500 text-black"
             />
           </label>
