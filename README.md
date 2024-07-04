@@ -11,7 +11,9 @@ With the Logbook, users can:
 - verify friends' entries (soon!)
 - share to decentralized social media (soon!)
 
-<iframe src="https://www.loom.com/embed/f1ad5b18db5f444688ccf949ac8fa1bd?sid=52720614-8ac7-4041-bb73-b646f4c58f7b" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="width:100%; height:500px;"></iframe>
+Watch a quick intro to the Logbook here: 
+
+[![Watch the video](./packages/nextjs/public/logbook-vid.png)](https://www.loom.com/share/f1ad5b18db5f444688ccf949ac8fa1bd?sid=52720614-8ac7-4041-bb73-b646f4c58f7b)
 
 You can find documentation about the Location Proof Protocol [here](https://astral-docs-test.vercel.app/docs/location-proof-protocol/introduction). 
 
