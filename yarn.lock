@@ -7888,7 +7888,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ethers@npm:^6.10.0, ethers@npm:^6.11.1, ethers@npm:^6.12.1":
+"ethers@npm:^6.10.0, ethers@npm:^6.11.1, ethers@npm:^6.13.1":
   version: 6.13.1
   resolution: "ethers@npm:6.13.1"
   dependencies:
@@ -13444,7 +13444,7 @@ __metadata:
     "@types/react-dom": latest
     commitlint: ^19.3.0
     date-fns: ^3.6.0
-    ethers: ^6.12.1
+    ethers: ^6.13.1
     graphql: ^16.8.1
     husky: ^8.0.1
     lint-staged: ^13.0.3
