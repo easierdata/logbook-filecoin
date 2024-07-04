@@ -14,6 +14,16 @@ const nextConfig = {
     config.externals.push("pino-pretty", "lokijs", "encoding");
     return config;
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: "bronze-bright-cardinal-547.mypinata.cloud",
+        port: '',
+        pathname: '/ipfs/cid/**',
+      },
+    ],
+  },
 };
 
 module.exports = nextConfig;

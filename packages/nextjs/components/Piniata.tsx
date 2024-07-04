@@ -1,11 +1,15 @@
 "use client";
 
+// import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
 export default function PintataUpload() {
   const [file, setFile] = useState("");
   const [cid, setCid] = useState("");
   const [uploading, setUploading] = useState(false);
+  const GATEWAY_URL = process.env.NEXT_PUBLIC_GATEWAY_URL
+    ? process.env.NEXT_PUBLIC_GATEWAY_URL
+    : "https://gateway.pinata.cloud";
 
   const inputFile = useRef<any>(null);
   useEffect(() => {
@@ -53,6 +57,9 @@ export default function PintataUpload() {
         />
       </label>
       {uploading && <progress className="progress w-56 progress-primary absolute mt-1 ml-1" />}
+      {cid && (
+        <img src={`https://${GATEWAY_URL}/ipfs/${cid}`} alt="file upload" className="m-1 border-4 border-primary" />
+      )}
     </div>
   );
 }
