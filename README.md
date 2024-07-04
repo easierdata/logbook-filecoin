@@ -13,7 +13,9 @@ With the Logbook, users can:
 
 Watch a quick intro to the Logbook here: 
 
-[![Watch the video](./packages/nextjs/public/logbook-vid.png)](https://www.loom.com/share/f1ad5b18db5f444688ccf949ac8fa1bd?sid=52720614-8ac7-4041-bb73-b646f4c58f7b)
+<a href="https://www.loom.com/share/f1ad5b18db5f444688ccf949ac8fa1bd?sid=52720614-8ac7-4041-bb73-b646f4c58f7b" target="_blank">
+  <img src="./packages/nextjs/public/logbook-vid.png" alt="Watch the video">
+</a>
 
 You can find documentation about the Location Proof Protocol [here](https://astral-docs-test.vercel.app/docs/location-proof-protocol/introduction). 
 
