@@ -2,16 +2,17 @@
 
 import React, { useState } from "react";
 import Mapbox from "../components/Mapbox";
-import { useQuery } from "@apollo/client";
+// import { useQuery } from "@apollo/client";
 // import { Address } from "../components/scaffold-eth";
 // import { MapPinIcon } from "@heroicons/react/24/outline";
 import type { NextPage } from "next";
-import easConfig from "~~/EAS.config";
+// import easConfig from "~~/EAS.config";
 import CheckInControls from "~~/components/CheckInControls";
 import CheckinForm from "~~/components/CheckinForm";
 import Disclaimer from "~~/components/Disclaimer";
 import Loading from "~~/components/Loading";
-import { GET_ATTESTATIONS } from "~~/services/queries";
+
+// import { GET_ATTESTATIONS } from "~~/services/queries";
 
 // import Link from "next/link";
 // import { useAccount } from "wagmi";
@@ -24,29 +25,29 @@ const Home: NextPage = () => {
   const [isTxLoading, setIsTxLoading] = useState(false);
   const [isDisclaimer, setIsDisclaimer] = useState(true);
 
-  const {
-    loading,
-    error,
-    data: attestationsData,
-  } = useQuery(GET_ATTESTATIONS, {
-    variables: { schemaId: easConfig.SCHEMA_UID_SEPOLIA },
-  });
+  // const {
+  //   loading,
+  //   error,
+  //   data: attestationsData,
+  // } = useQuery(GET_ATTESTATIONS, {
+  //   variables: { schemaId: easConfig.SCHEMA_UID_SEPOLIA },
+  // });
 
   ////
   // DEGUGGING:
-  console.log("[🧪 DEBUG](Attestations loading):", loading);
-  if (error) console.log("[🧪 DEBUG](Attestations error):", error);
+  // console.log("[🧪 DEBUG](Attestations loading):", loading);
+  // if (error) console.log("[🧪 DEBUG](Attestations error):", error);
   //
 
   return (
     <div className="">
-      {(isLoading || isTxLoading) && <Loading />}
+      {(isLoading || isTxLoading) && <Loading txLoading={isTxLoading} />}
       {isCheckInActive && isDisclaimer && <Disclaimer setIsDisclaimer={setIsDisclaimer} />}
       <Mapbox
         setIsControlsActive={setIsControlsActive}
         setLatLng={setLatLng}
         isCheckInActive={isCheckInActive}
-        attestationsData={attestationsData}
+        // attestationsData={attestationsData}
         setIsLoading={setIsLoading}
       />
 

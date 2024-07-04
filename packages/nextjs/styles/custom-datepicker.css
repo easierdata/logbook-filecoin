@@ -1,0 +1,10 @@
+/* custom-datepicker.css */
+.react-datepicker-wrapper {
+  width: 100%;
+}
+
+
+.react-datepicker__input-container input:focus {
+  outline: none;
+  border-color: #2563eb; /* focus:border-indigo-500 */
+}
