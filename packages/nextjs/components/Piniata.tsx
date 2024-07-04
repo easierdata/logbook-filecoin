@@ -1,10 +1,18 @@
 "use client";
 
-// import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { ethers } from "ethers";
+// import Image from "next/image";
+import { IFormValues } from "~~/app/interface/interface";
 
-export default function PintataUpload() {
-  const [file, setFile] = useState("");
+export default function PintataUpload({
+  formValues,
+  setFormValues,
+}: {
+  formValues: IFormValues;
+  setFormValues: React.Dispatch<React.SetStateAction<IFormValues>>;
+}) {
+  const [file, setFile] = useState(null);
   const [cid, setCid] = useState("");
   const [uploading, setUploading] = useState(false);
   const GATEWAY_URL = process.env.NEXT_PUBLIC_GATEWAY_URL
@@ -12,23 +20,17 @@ export default function PintataUpload() {
     : "https://gateway.pinata.cloud";
 
   const inputFile = useRef<any>(null);
-  useEffect(() => {
-    console.log("[🧪 DEBUG](file):", file);
-    console.log("[🧪 DEBUG](cid):", cid);
-    console.log(
-      "[🧪 DEBUG](process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/):",
-      `${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${cid}`,
-    );
-  }, [cid, file]);
-  const uploadFile = async (fileToUpload: string | Blob) => {
+
+  const uploadFile = async (fileToUpload: Blob) => {
     try {
       setUploading(true);
-      const data = new FormData();
+      const data: FormData = new FormData();
       data.set("file", fileToUpload);
       const res = await fetch("/api/files", {
         method: "POST",
         body: data,
       });
+
       const resData = await res.json();
       setCid(resData.IpfsHash);
       setUploading(false);
@@ -38,9 +40,16 @@ export default function PintataUpload() {
       alert("Trouble uploading file");
     }
   };
+
+  useEffect(() => {
+    if (cid) setFormValues({ ...formValues, mediaData: [ethers.toUtf8Bytes(cid)] });
+  }, [cid, file]);
+
   // @ts-expect-error: Let's ignore a compile error like this unreachable code
   const handleChange = e => {
     setFile(e.target.files[0]);
+    setFormValues({ ...formValues, mediaType: [e.target.files[0].type] });
+
     uploadFile(e.target.files[0]);
   };
 

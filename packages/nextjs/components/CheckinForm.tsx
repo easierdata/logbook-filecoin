@@ -10,6 +10,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { ClockIcon, DocumentTextIcon, MapPinIcon } from "@heroicons/react/24/outline";
 import easConfig from "~~/EAS.config";
+import { IFormValues } from "~~/app/interface/interface";
 import { EASContext } from "~~/components/EasContextProvider";
 
 // To add DaisyUI styles
@@ -20,20 +21,26 @@ import { EASContext } from "~~/components/EasContextProvider";
 
 const CheckinForm = ({ latLng = [0, 0], setIsTxLoading }: { latLng: number[]; setIsTxLoading: Dispatch<boolean> }) => {
   // NextJS redirect
+  const now = new Date();
   const { push } = useRouter();
-  const [formValues, setFormValues] = useState({
-    coordinateInputX: latLng[0], // to be picked up by prop
-    coordinateInputY: latLng[1], // to be picked up by prop
-    timestamp: new Date(),
+  const [formValues, setFormValues] = useState<IFormValues>({
+    coordinateInputX: latLng[0].toString(), // to be picked up by prop
+    coordinateInputY: latLng[1].toString(), // to be picked up by prop
+
+    eventTimestamp: Math.floor(Number(now) / 1000),
     data: "",
+    mediaType: [""],
+    mediaData: [ethers.toUtf8Bytes("")],
   });
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
 
   const handleDateChange = (date: Date | null) => {
     if (date) {
-      setSelectedDate(date);
-      handleChange({ target: { name: "timestamp", value: date } });
+      // date(date);
+      // handleChange({ target: { name: "timestamp", value: date } });
+      console.log("[🧪 DEBUG](date):", Math.floor(date.getTime() / 1000));
+      setFormValues({ ...formValues, eventTimestamp: Math.floor(date.getTime() / 1000) });
     } else {
       setSelectedDate(null);
     }
@@ -75,7 +82,7 @@ const CheckinForm = ({ latLng = [0, 0], setIsTxLoading }: { latLng: number[]; se
     const encodedData = schemaEncoder.encodeData([
       {
         name: "eventTimestamp",
-        value: Math.floor(formValues.timestamp.getTime() / 1000), // here we convert to nowInSeconds
+        value: formValues.eventTimestamp, // here we convert to nowInSeconds
         type: "uint256",
       },
       {
@@ -90,8 +97,10 @@ const CheckinForm = ({ latLng = [0, 0], setIsTxLoading }: { latLng: number[]; se
       },
       {
         name: "location",
-        value: [`${formValues.coordinateInputX.toString()},${formValues.coordinateInputY.toString()}`],
-        type: "string[]",
+        value: ethers
+          .toUtf8Bytes(`${(formValues.coordinateInputX.toString(), formValues.coordinateInputY.toString())}`)
+          .toString(),
+        type: "bytes",
       },
       {
         name: "recipeType",
@@ -106,12 +115,12 @@ const CheckinForm = ({ latLng = [0, 0], setIsTxLoading }: { latLng: number[]; se
       {
         //  @RON: Here is where we put in the IPFS hashes
         name: "mediaType",
-        value: ["ipfs:image/png"], // storageSystem:MIMEtype
+        value: formValues.mediaType, // storageSystem:MIMEtype
         type: "string[]",
       },
       {
         name: "mediaData",
-        value: [ethers.toUtf8Bytes("cid")], // CID, encoded as bytes somehow
+        value: formValues.mediaData, // CID, encoded as bytes somehow
         type: "bytes[]",
       },
       { name: "memo", value: formValues.data, type: "string" },
@@ -139,8 +148,6 @@ const CheckinForm = ({ latLng = [0, 0], setIsTxLoading }: { latLng: number[]; se
         console.log("[🧪 DEBUG](err):", err);
       });
   }
-
-  console.log("TIMESTAMP!", formValues.timestamp);
 
   return (
     <div className="flex items-center flex-col w-full flex-grow">
@@ -171,6 +178,7 @@ const CheckinForm = ({ latLng = [0, 0], setIsTxLoading }: { latLng: number[]; se
               showTimeSelect
               timeIntervals={1}
               dateFormat="Pp"
+              // value={formValues.eventTimestamp}
               className="input input-bordered w-full bg-base-200 border-indigo-500 text-black"
             />
           </label>
@@ -185,7 +193,7 @@ const CheckinForm = ({ latLng = [0, 0], setIsTxLoading }: { latLng: number[]; se
               onChange={handleChange}
             />
           </label>
-          <PintataUpload />
+          <PintataUpload formValues={formValues} setFormValues={setFormValues} />
           <input type="submit" value="Record Log Entry" className="input btn btn-primary bg-primary" />
         </form>
       </div>
