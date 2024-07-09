@@ -11,7 +11,7 @@ export default function PintataUpload({
   formValues: IFormValues;
   setFormValues: React.Dispatch<React.SetStateAction<IFormValues>>;
 }) {
-  const [file, setFile] = useState(null);
+  const [, setFile] = useState(null);
   const [cid, setCid] = useState(null);
   const [uploading, setUploading] = useState(false);
   const GATEWAY_URL = process.env.NEXT_PUBLIC_GATEWAY_URL
@@ -42,7 +42,7 @@ export default function PintataUpload({
 
   useEffect(() => {
     if (cid) setFormValues({ ...formValues, mediaData: [cid] });
-  }, [cid, file]);
+  }, [setFormValues, formValues, cid]);
 
   // @ts-expect-error: Let's ignore a compile error like this unreachable code
   const handleChange = e => {
