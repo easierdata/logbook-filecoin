@@ -25,12 +25,14 @@ export default function PintataUpload({
       setUploading(true);
       const data: FormData = new FormData();
       data.set("file", fileToUpload);
+      console.log("[🧪 DEBUG](fileToUpload):", fileToUpload);
       const res = await fetch("/api/files", {
         method: "POST",
         body: data,
       });
 
       const resData = await res.json();
+      console.log("[🧪 DEBUG](resData):", resData);
       setCid(resData.IpfsHash);
       setUploading(false);
     } catch (e) {
