@@ -18,9 +18,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: "bronze-bright-cardinal-547.mypinata.cloud",
-        port: '',
-        pathname: '/**',
+        hostname: "**",
       },
     ],
   },
