@@ -44,7 +44,7 @@ export default function PintataUpload({
 
   useEffect(() => {
     if (cid) setFormValues({ ...formValues, mediaData: [cid] });
-  }, [setFormValues, formValues, cid]);
+  }, [cid]);
 
   // @ts-expect-error: Let's ignore a compile error like this unreachable code
   const handleChange = e => {
