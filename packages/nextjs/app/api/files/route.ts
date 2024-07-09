@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+// export const config = {
+//   api: {
+//     bodyParser: false,
+//   },
+// };
+export const dynamic = "auto";
 
 export async function POST(request: NextRequest) {
   try {
