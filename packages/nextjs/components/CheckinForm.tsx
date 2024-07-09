@@ -30,7 +30,7 @@ const CheckinForm = ({ latLng = [0, 0], setIsTxLoading }: { latLng: number[]; se
     eventTimestamp: Math.floor(Number(now) / 1000),
     data: "",
     mediaType: [""],
-    mediaData: [ethers.toUtf8Bytes("")],
+    mediaData: [""],
   });
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
@@ -97,10 +97,9 @@ const CheckinForm = ({ latLng = [0, 0], setIsTxLoading }: { latLng: number[]; se
       },
       {
         name: "location",
-        value: ethers
-          .toUtf8Bytes(`${(formValues.coordinateInputX.toString(), formValues.coordinateInputY.toString())}`)
-          .toString(),
-        type: "bytes",
+        // value: `${formValues.coordinateInputX.toString()}, ${formValues.coordinateInputY.toString()}`,
+        value: `${formValues.coordinateInputX.toString()}, ${formValues.coordinateInputY.toString()}`.toString(),
+        type: "string",
       },
       {
         name: "recipeType",
@@ -121,7 +120,7 @@ const CheckinForm = ({ latLng = [0, 0], setIsTxLoading }: { latLng: number[]; se
       {
         name: "mediaData",
         value: formValues.mediaData, // CID, encoded as bytes somehow
-        type: "bytes[]",
+        type: "string[]",
       },
       { name: "memo", value: formValues.data, type: "string" },
     ]);

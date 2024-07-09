@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ethers } from "ethers";
 // import Image from "next/image";
 import { IFormValues } from "~~/app/interface/interface";
 
@@ -13,7 +12,7 @@ export default function PintataUpload({
   setFormValues: React.Dispatch<React.SetStateAction<IFormValues>>;
 }) {
   const [file, setFile] = useState(null);
-  const [cid, setCid] = useState("");
+  const [cid, setCid] = useState(null);
   const [uploading, setUploading] = useState(false);
   const GATEWAY_URL = process.env.NEXT_PUBLIC_GATEWAY_URL
     ? process.env.NEXT_PUBLIC_GATEWAY_URL
@@ -42,7 +41,7 @@ export default function PintataUpload({
   };
 
   useEffect(() => {
-    if (cid) setFormValues({ ...formValues, mediaData: [ethers.toUtf8Bytes(cid)] });
+    if (cid) setFormValues({ ...formValues, mediaData: [cid] });
   }, [cid, file]);
 
   // @ts-expect-error: Let's ignore a compile error like this unreachable code

@@ -4,5 +4,5 @@ export interface IFormValues {
   coordinateInputY: string;
   data: string;
   mediaType: string[];
-  mediaData: Uint8Array[];
+  mediaData: string[];
 }
