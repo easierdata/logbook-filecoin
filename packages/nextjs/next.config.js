@@ -20,7 +20,7 @@ const nextConfig = {
         protocol: 'https',
         hostname: "bronze-bright-cardinal-547.mypinata.cloud",
         port: '',
-        pathname: '/ipfs/cid/**',
+        pathname: '/**',
       },
     ],
   },
