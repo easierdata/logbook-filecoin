@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
 export async function POST(request: NextRequest) {
   try {
     const data = await request.formData();
