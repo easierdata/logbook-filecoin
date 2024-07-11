@@ -1,8 +1,6 @@
 import React, { Dispatch } from "react";
 import { MapPinIcon } from "@heroicons/react/24/outline";
 
-// Ensure correct path
-
 const CheckInControls = ({
   isControlsActive,
   setCheckInActive,
@@ -11,9 +9,9 @@ const CheckInControls = ({
   setCheckInActive: Dispatch<boolean>;
 }) => {
   return (
-    <div className="toast-center m-5 toast-bottom">
-      <div className="alert alert-info flex bg-white border border-black text-black flex justify-between items-center w-full shadow-lg">
-        <span className="flex items-center">
+    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-50 w-11/12 sm:w-3/4 md:w-1/2 lg:w-[50%]">
+      <div className="alert alert-info flex bg-white border border-black text-black justify-between items-center w-full shadow-lg">
+        <span className="flex items-center text-left">
           <MapPinIcon className={`h-5 w-5 mr-2 ${isControlsActive ? "text-primary" : "text-gray-400"}`} />
           Tap the map to add your logbook entry.
         </span>
@@ -27,23 +25,6 @@ const CheckInControls = ({
       </div>
     </div>
   );
-  // return (
-  //   <div className="toast-center m-5 toast-bottom">
-  //     <div className="alert alert-info flex bg-white border border-black text-black  flex justify-between items-center w-full">
-  //       <span>Tap the map to add your logbook entry.</span>
-  //       <div className="flex">
-  //         <button className={`btn ${isControlsActive ? `btn-primary` : `btn-disabled`}`}>
-  //           RECORD
-  //         </button>
-  //       </div>
-  //       {/* <div
-  //         className={`btn ${isControlsActive ? `btn-primary` : `btn-disabled`}`}
-  //         onClick={() => setCheckInActive(true)}
-  //       >
-  //         RECORD
-  //       </div> */}
-  //     </div>
-  //   </div>
-  // );
 };
+
 export default CheckInControls;
