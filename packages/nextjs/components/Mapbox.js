@@ -1,5 +1,5 @@
 // eslint-disable-line import/no-webpack-loader-syntax
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import mapboxgl from "!mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import randomMapLoad from "~~/utils/randomizeMapboxLoad";
@@ -19,25 +19,6 @@ export default function Mapbox({
   const map = useRef(null);
   const markersRef = useRef([]);
   const randomMapView = randomMapLoad();
-  // Possibly break out userLocation and mapView into separate state variables
-    // -> It already is!!
-    // setLatLng is what will be set in the form
-    // lng and lat are the current state of the map
-  const [lng, setLng] = useState(null);
-  const [lat, setLat] = useState(null);
-  const [zoom, setZoom] = useState(randomMapView.zoom);
-
-  console.log("📍[State]:", lngLat);
-  // If we were going to rebuild:
-  /* 
-    - Load map with random location
-    - On click, setLatLng to clicked location
-    - On click, setControlsActive to false
-    
-    Why do we need the current map view lng and lat as state variables?
-  
-  
-  */
 
   /**
    * Handle navigator.geolocation.getCurrentPosition()
@@ -60,7 +41,7 @@ export default function Mapbox({
     }
 
     function showError(error) {
-      console.log('showError called');
+      console.log("showError called");
       switch (error.code) {
         case error.PERMISSION_DENIED:
           console.log("User denied the request for Geolocation.");
@@ -82,21 +63,11 @@ export default function Mapbox({
       console.log("NAVIGATOR");
       navigator.geolocation.getCurrentPosition(showPosition, showError);
     } else {
-      console.log("Geolocation is not supported by this browser. Falling back to default coordinates (0, 0).");
-      setLng(0);
-      setLat(0); // repeat?
+      console.log("Falling back to random coordinates:", randomMapView);
+      // setLng(0);
+      // setLat(0); // repeat?
     }
-  }, []); // -> will only run once after initial render
-
-  /**
-   * Set initial map view to random location on first load
-   */
-  // useEffect(() => {
-  //   map?.current?.flyTo({
-  //     center: [randomMapView.center.lng, randomMapView.center.lat],
-  //     essential: true,
-  //   });
-  // }, []);
+  }, [randomMapView]); // -> will only run once after initial render
 
   // Loading state side effect
   useEffect(() => {
@@ -118,35 +89,36 @@ export default function Mapbox({
     }
 
     // We should pull attestations overlay out into a different set of code no? Feels like we need a few mapping utils?
-    if (latLngAttestation.length > 0) {
-      markersRef.current.forEach(marker => marker.remove());
-      markersRef.current = [];
+    // if (latLngAttestation.length > 0) {
+    //   markersRef.current.forEach(marker => marker.remove());
+    //   markersRef.current = [];
 
-      // Set state variables
-      console.log("📍[Mapbox] Attestation coordinates:", latLngAttestation[0], latLngAttestation[1])
-      setLng(latLngAttestation[0]);
-      setLat(latLngAttestation[1]);
+    //   // Set state variables
+    //   console.log("📍[Mapbox] Attestation coordinates:", latLngAttestation[0], latLngAttestation[1])
+    //   console.log('latLngAttestation:', latLngAttestation);
+    //   // setLng(latLngAttestation[0]);
+    //   // setLat(latLngAttestation[1]);
 
-      const el = document.createElement("div");
-      el.className = "marker bg-primary";
-      // el.src = "/eas_logo.png";
-      // el.style.width = "40px";
-      // el.style.height = "40px";
-      // Add a pin to the map
+    //   const el = document.createElement("div");
+    //   el.className = "marker bg-primary";
+    //   // el.src = "/eas_logo.png";
+    //   // el.style.width = "40px";
+    //   // el.style.height = "40px";
+    //   // Add a pin to the map
 
-      var newMarker = new mapboxgl.Marker(el)
-        .setLngLat([latLngAttestation[1], latLngAttestation[0]])
-        .addTo(map.current);
+    //   var newMarker = new mapboxgl.Marker(el)
+    //     .setLngLat([latLngAttestation[1], latLngAttestation[0]])
+    //     .addTo(map.current);
 
-      // Animated flyTo to position marker at center of map
-      map.current.flyTo({
-        center: [latLngAttestation[1], latLngAttestation[0]],
-        essential: true,
-      });
+    //   // Animated flyTo to position marker at center of map
+    //   map.current.flyTo({
+    //     center: [latLngAttestation[1], latLngAttestation[0]],
+    //     essential: true,
+    //   });
 
-      // Add to state
-      markersRef.current.push(newMarker);
-    }
+    //   // Add to state
+    //   markersRef.current.push(newMarker);
+    // }
 
     // map.current?.on("move", () => {
     //   setLng(map.current.getCenter().lng.toFixed(4));
@@ -165,17 +137,11 @@ export default function Mapbox({
       // setLat(latLngAttestation.length > 0 ? latLngAttestation[1] : e.lngLat.lat);
 
       // Set state on parent page (to pass on checkin)
-      console.log("📍[setLngLat] State var set at:", e.lngLat.lng, e.lngLat.lat)
-      setLatLng([e.lngLat.lng, e.lngLat.lat]); // trim precision
+      console.log("📍[setLngLat] State var set at:", e.lngLat.lng, e.lngLat.lat);
+      setLatLng([parseFloat(e.lngLat.lng.toPrecision(6)), parseFloat(e.lngLat.lat.toPrecision(6))]); // trim precision
 
       const el = document.createElement("div");
       el.className = "marker bg-primary";
-      // const el = document.createElement("img");
-      // el.className = "marker";
-      // el.src = "/eas_logo.png";
-      // el.style.width = "30px";
-      // el.style.height = "30px";
-      // el.style.borderRadius = "50%";
       // Add a pin to the map
       var newMarker = new mapboxgl.Marker(el).setLngLat(e.lngLat).addTo(map.current);
 
@@ -184,6 +150,7 @@ export default function Mapbox({
         center: e.lngLat,
         essential: true,
         duration: 1000,
+        zoom: 12.5,
       });
 
       // Add to state
@@ -193,7 +160,7 @@ export default function Mapbox({
       setIsControlsActive && setIsControlsActive(true);
       // Done loading
     });
-  }, [latLngAttestation, lng, lat, zoom, setLatLng, setIsControlsActive]);
+  }, [latLngAttestation, setLatLng, randomMapView, setIsControlsActive]);
 
   // Canvas resize side effect
   useEffect(() => {
@@ -216,7 +183,7 @@ export default function Mapbox({
       mapContainer.current.style.height = "80vh";
       map.current.resize();
     }
-  }, [isCheckInActive, zoom, lat, lng]);
+  }, [isCheckInActive, lngLat]);
 
   return <div ref={mapContainer} className="card mx-4 mt-4 map-container" style={{ height }} />;
 }
