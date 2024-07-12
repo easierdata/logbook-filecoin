@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useQuery } from "@apollo/client";
-import { ethers } from "ethers";
 import type { NextPage } from "next";
 import { ArrowUpRightIcon, ClockIcon, DocumentTextIcon, MapPinIcon } from "@heroicons/react/24/outline";
 import Mapbox from "~~/components/Mapbox";
@@ -12,6 +11,9 @@ import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
 import { GET_ATTESTATION } from "~~/services/queries";
 
 // import Link from "next/link";
+const GATEWAY_URL = process.env.NEXT_PUBLIC_GATEWAY_URL
+  ? process.env.NEXT_PUBLIC_GATEWAY_URL
+  : "https://gateway.pinata.cloud";
 
 const CheckinFrom: NextPage = () => {
   const params = useParams();
@@ -75,7 +77,7 @@ const CheckinFrom: NextPage = () => {
                   isCheckInActive={true}
                   latLngAttestation={
                     data?.attestation?.decodedDataJson &&
-                    parsedLocation(ethers.toUtf8String(JSON.parse(data?.attestation?.decodedDataJson)[3].value.value))
+                    parsedLocation(JSON.parse(data?.attestation?.decodedDataJson)[3].value.value)
                   }
                 />
               )}
@@ -110,18 +112,14 @@ const CheckinFrom: NextPage = () => {
                   <td>
                     <strong className="text-sm">Lon: &nbsp;&nbsp;&nbsp; </strong>
                     {(data?.attestation?.decodedDataJson &&
-                      parsedLocation(
-                        ethers.toUtf8String(JSON.parse(data?.attestation?.decodedDataJson)[3].value.value),
-                      )[0]) ||
+                      parsedLocation(JSON.parse(data?.attestation?.decodedDataJson)[3].value.value)[0]) ||
                       "fetching"}
                   </td>
                   <td>
                     <strong className="text-sm">Lat: &nbsp;&nbsp;&nbsp;</strong>
 
                     {(data?.attestation?.decodedDataJson &&
-                      parsedLocation(
-                        ethers.toUtf8String(JSON.parse(data?.attestation?.decodedDataJson)[3].value.value),
-                      )[1]) ||
+                      parsedLocation(JSON.parse(data?.attestation?.decodedDataJson)[3].value.value)[1]) ||
                       "fetching"}
                   </td>
                 </tr>
@@ -150,6 +148,24 @@ const CheckinFrom: NextPage = () => {
                     <strong>From:</strong>
                   </td>
                   <td>{(data?.attestation?.decodedDataJson && data?.attestation?.attester) || "fetching"}</td>
+                </tr>
+                <tr className="border-gray-200">
+                  <td className="text-sm">
+                    <strong>Media:</strong>
+                  </td>
+                  <td>
+                    {" "}
+                    {(data?.attestation?.decodedDataJson && (
+                      <img
+                        src={`https://${GATEWAY_URL}/ipfs/${
+                          JSON.parse(data?.attestation?.decodedDataJson)[7].value.value
+                        }`}
+                        alt="file upload"
+                        className="m-1 border-4 border-primary"
+                      />
+                    )) ||
+                      "fetching"}
+                  </td>
                 </tr>
                 <tr>
                   <td>

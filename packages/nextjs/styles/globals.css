@@ -54,6 +54,7 @@ p.tx-loading {
   height: 20px;
   border-radius: 50%;
   fill-opacity: 50%;
+  z-index: 0;
 }
 
 .btn.custom-disabled {
