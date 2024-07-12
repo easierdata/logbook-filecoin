@@ -1,6 +1,7 @@
 // eslint-disable-line import/no-webpack-loader-syntax
 import React, { useEffect, useRef, useState } from "react";
 import mapboxgl from "!mapbox-gl";
+import randomMapLoad from "~~/utils/randomizeMapboxLoad";
 // import { blo } from "blo";
 import "mapbox-gl/dist/mapbox-gl.css";
 
@@ -20,9 +21,10 @@ export default function Mapbox({
   const mapContainer = useRef(null);
   const map = useRef(null);
   const markersRef = useRef([]);
-  const [lng, setLng] = useState(0);
-  const [lat, setLat] = useState(0);
-  const [zoom, setZoom] = useState(6);
+  const randomMapView = randomMapLoad();
+  const [lng, setLng] = useState(randomMapView.center.lng);
+  const [lat, setLat] = useState(randomMapView.center.lat);
+  const [zoom, setZoom] = useState(randomMapView.zoom);
 
   useEffect(() => {
     function showPosition(position) {

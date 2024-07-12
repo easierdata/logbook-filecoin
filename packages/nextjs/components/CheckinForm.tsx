@@ -36,13 +36,14 @@ const CheckinForm = ({ latLng = [0, 0], setIsTxLoading }: { latLng: number[]; se
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
 
   const handleDateChange = (date: Date | null) => {
+    console.log("Selected date:", date); // Debugging
     if (date) {
-      // date(date);
-      // handleChange({ target: { name: "timestamp", value: date } });
-      console.log("[🧪 DEBUG](date):", Math.floor(date.getTime() / 1000));
-      setFormValues({ ...formValues, eventTimestamp: Math.floor(date.getTime() / 1000) });
-    } else {
-      setSelectedDate(null);
+      setSelectedDate(date);
+      setFormValues(prevFormValues => ({
+        ...prevFormValues,
+        timestamp: date,
+      }));
+      console.log("Form values updated with new date:", formValues); // Debugging
     }
   };
 
@@ -57,7 +58,9 @@ const CheckinForm = ({ latLng = [0, 0], setIsTxLoading }: { latLng: number[]; se
 
   const handleChange = (event: { preventDefault?: () => void; target: { name: string; value: any } }) => {
     if (event.preventDefault) event.preventDefault();
-    setFormValues({ ...formValues, [event.target.name]: event.target.value });
+    const updatedFormValues = { ...formValues, [event.target.name]: event.target.value };
+    setFormValues(updatedFormValues);
+    console.log("Form values updated:", updatedFormValues); // Debugging
   };
 
   // Set attestation from EAS api
