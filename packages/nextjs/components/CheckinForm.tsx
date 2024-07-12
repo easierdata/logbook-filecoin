@@ -19,13 +19,13 @@ import { EASContext } from "~~/components/EasContextProvider";
 
 // import Link from "next/link";
 
-const CheckinForm = ({ latLng = [0, 0], setIsTxLoading }: { latLng: number[]; setIsTxLoading: Dispatch<boolean> }) => {
+const CheckinForm = ({ lngLat, setIsTxLoading }: { lngLat: number[]; setIsTxLoading: Dispatch<boolean> }) => {
   // NextJS redirect
   const now = new Date();
   const { push } = useRouter();
   const [formValues, setFormValues] = useState<IFormValues>({
-    coordinateInputX: latLng[0].toString(), // to be picked up by prop
-    coordinateInputY: latLng[1].toString(), // to be picked up by prop
+    longitude: lngLat[0].toString(), // to be picked up by prop
+    latitude: lngLat[1].toString(), // to be picked up by prop
 
     eventTimestamp: Math.floor(Number(now) / 1000),
     data: "",
@@ -100,8 +100,8 @@ const CheckinForm = ({ latLng = [0, 0], setIsTxLoading }: { latLng: number[]; se
       },
       {
         name: "location",
-        // value: `${formValues.coordinateInputX.toString()}, ${formValues.coordinateInputY.toString()}`,
-        value: `${formValues.coordinateInputX.toString()}, ${formValues.coordinateInputY.toString()}`.toString(),
+        // value: `${formValues.longitude.toString()}, ${formValues.latitude.toString()}`,
+        value: `${formValues.longitude.toString()}, ${formValues.latitude.toString()}`.toString(),
         type: "string",
       },
       {
@@ -159,16 +159,16 @@ const CheckinForm = ({ latLng = [0, 0], setIsTxLoading }: { latLng: number[]; se
             <MapPinIcon className="h-5 w-5 text-primary flex-shrink-0 flex-grow-0" style={{ flexBasis: "auto" }} />
             <input
               type="number"
-              name="coordinateInputX"
+              name="longitude"
               className="input input-bordered w-full bg-base-200 border-indigo-500 text-black"
-              value={latLng[0]}
+              value={lngLat[0]}
               onChange={handleChange}
             />
             <input
               type="number"
-              name="coordinateInputY"
+              name="latitude"
               className="input input-bordered w-full bg-base-200 border-indigo-500 text-black"
-              value={latLng[1]}
+              value={lngLat[1]}
               onChange={handleChange}
             />
           </label>

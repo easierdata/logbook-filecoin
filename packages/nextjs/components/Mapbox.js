@@ -1,20 +1,17 @@
 // eslint-disable-line import/no-webpack-loader-syntax
 import React, { useEffect, useRef, useState } from "react";
 import mapboxgl from "!mapbox-gl";
-import randomMapLoad from "~~/utils/randomizeMapboxLoad";
-// import { blo } from "blo";
 import "mapbox-gl/dist/mapbox-gl.css";
+import randomMapLoad from "~~/utils/randomizeMapboxLoad";
 
-// import { useAccount } from "wagmi";
-
-mapboxgl.accessToken = "pk.eyJ1Ijoicm9uY2h1Y2siLCJhIjoiY2x2Y2o5Z2drMGY3cjJrcGI4b2xsNzdtaCJ9.gi5RJ8qRhTSwfYuhVwhmvQ";
+mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
 
 export default function Mapbox({
   setIsControlsActive = bool => bool,
   height = "70vh",
   setLatLng = arr => arr,
+  lngLat = [],
   isCheckInActive = false,
-  // attestationsData = {},
   latLngAttestation = [],
   setIsLoading = bool => bool,
 }) {
@@ -22,23 +19,44 @@ export default function Mapbox({
   const map = useRef(null);
   const markersRef = useRef([]);
   const randomMapView = randomMapLoad();
-  const [lng, setLng] = useState(randomMapView.center.lng);
-  const [lat, setLat] = useState(randomMapView.center.lat);
+  // Possibly break out userLocation and mapView into separate state variables
+    // -> It already is!!
+    // setLatLng is what will be set in the form
+    // lng and lat are the current state of the map
+  const [lng, setLng] = useState(null);
+  const [lat, setLat] = useState(null);
   const [zoom, setZoom] = useState(randomMapView.zoom);
 
+  console.log("📍[State]:", lngLat);
+  // If we were going to rebuild:
+  /* 
+    - Load map with random location
+    - On click, setLatLng to clicked location
+    - On click, setControlsActive to false
+    
+    Why do we need the current map view lng and lat as state variables?
+  
+  
+  */
+
+  /**
+   * Handle navigator.geolocation.getCurrentPosition()
+   *    - success and error callbacks
+   *
+   */
   useEffect(() => {
     function showPosition(position) {
       console.log("showPosition called");
-      const lon = position.coords.longitude;
-      const lat = position.coords.latitude;
-     
+
       // Fly to center without setting lat,lon state
       map?.current?.flyTo({
-        center: [lon, lat],
+        center: [position.coords.longitude, position.coords.latitude],
         essential: true,
+        zoom: 10,
+        // duration: 3000,
       });
-      
-      console.log("✔📍 User coordinates set:[", lon, lat, "]");
+
+      console.log("✔📍 Map View set:[", position.coords.longitude, position.coords.latitude, "]");
     }
 
     function showError(error) {
@@ -57,9 +75,7 @@ export default function Mapbox({
           console.log("An unknown error occurred.");
           break;
       }
-      console.log("Falling back to default coordinates (0, 0)");
-      setLng(0);
-      setLat(0);
+      console.log("Falling back to random coordinates:", randomMapView);
     }
 
     if (navigator.geolocation) {
@@ -70,24 +86,35 @@ export default function Mapbox({
       setLng(0);
       setLat(0); // repeat?
     }
-  }, []);
+  }, []); // -> will only run once after initial render
+
+  /**
+   * Set initial map view to random location on first load
+   */
+  // useEffect(() => {
+  //   map?.current?.flyTo({
+  //     center: [randomMapView.center.lng, randomMapView.center.lat],
+  //     essential: true,
+  //   });
+  // }, []);
 
   // Loading state side effect
   useEffect(() => {
-    console.log('[🧪 DEBUG](loading useEffect)')
+    console.log("[🧪 DEBUG](loading useEffect)");
     setIsLoading(false);
   }, [setIsLoading]);
 
   // Init map side effect
   useEffect(() => {
+    // If map is not initialized, create a new map instance positioned at random location
     if (!map.current) {
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
         style: "mapbox://styles/mapbox/standard",
-        center: latLngAttestation.length > 0 ? [latLngAttestation[1], latLngAttestation[0]] : [lng, lat],
-        zoom: zoom,
+        center: [randomMapView.center.lng, randomMapView.center.lat],
+        zoom: randomMapView.zoom,
         attributionControl: false,
-      });
+      }).flyTo();
     }
 
     // We should pull attestations overlay out into a different set of code no? Feels like we need a few mapping utils?
@@ -96,6 +123,7 @@ export default function Mapbox({
       markersRef.current = [];
 
       // Set state variables
+      console.log("📍[Mapbox] Attestation coordinates:", latLngAttestation[0], latLngAttestation[1])
       setLng(latLngAttestation[0]);
       setLat(latLngAttestation[1]);
 
@@ -120,11 +148,11 @@ export default function Mapbox({
       markersRef.current.push(newMarker);
     }
 
-    map.current?.on("move", () => {
-      setLng(map.current.getCenter().lng.toFixed(4));
-      setLat(map.current.getCenter().lat.toFixed(4));
-      setZoom(map.current.getZoom().toFixed(2));
-    });
+    // map.current?.on("move", () => {
+    //   setLng(map.current.getCenter().lng.toFixed(4));
+    //   setLat(map.current.getCenter().lat.toFixed(4));
+    //   setZoom(map.current.getZoom().toFixed(2));
+    // });
 
     map.current?.on("click", e => {
       // Clear existing markers
@@ -132,11 +160,13 @@ export default function Mapbox({
       markersRef.current = [];
 
       // Set state variables
-      setLng(latLngAttestation.length > 0 ? latLngAttestation[0] : e.lngLat.lng);
-      setLat(latLngAttestation.length > 0 ? latLngAttestation[1] : e.lngLat.lat);
+      // console.log("📍[Mapbox] Clicked at:", e.lngLat.lng, e.lngLat.lat);
+      // setLng(latLngAttestation.length > 0 ? latLngAttestation[0] : e.lngLat.lng);
+      // setLat(latLngAttestation.length > 0 ? latLngAttestation[1] : e.lngLat.lat);
 
       // Set state on parent page (to pass on checkin)
-      setLatLng([lat, lng]);
+      console.log("📍[setLngLat] State var set at:", e.lngLat.lng, e.lngLat.lat)
+      setLatLng([e.lngLat.lng, e.lngLat.lat]); // trim precision
 
       const el = document.createElement("div");
       el.className = "marker bg-primary";
@@ -153,6 +183,7 @@ export default function Mapbox({
       map.current.flyTo({
         center: e.lngLat,
         essential: true,
+        duration: 1000,
       });
 
       // Add to state
@@ -171,8 +202,8 @@ export default function Mapbox({
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
         style: "mapbox://styles/mapbox/standard",
-        center: [lng, lat],
-        zoom: zoom,
+        center: lngLat, // this should be latLng, i.e. the actual form variables ...
+        // zoom: zoom,
       });
     }
 
@@ -186,7 +217,6 @@ export default function Mapbox({
       map.current.resize();
     }
   }, [isCheckInActive, zoom, lat, lng]);
-
 
   return <div ref={mapContainer} className="card mx-4 mt-4 map-container" style={{ height }} />;
 }
