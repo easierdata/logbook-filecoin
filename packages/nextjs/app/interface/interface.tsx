@@ -1,7 +1,7 @@
 export interface IFormValues {
   eventTimestamp: number;
-  coordinateInputX: string;
-  coordinateInputY: string;
+  longitude: string;
+  latitude: string;
   data: string;
   mediaType: string[];
   mediaData: string[];

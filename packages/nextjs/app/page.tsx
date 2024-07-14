@@ -11,7 +11,7 @@ import Loading from "~~/components/Loading";
 const Home: NextPage = () => {
   const [isCheckInActive, setCheckInActive] = useState(false);
   const [isControlsActive, setIsControlsActive] = useState(false);
-  const [latLng, setLatLng] = useState([0, 0]);
+  const [lngLat, setLngLat] = useState([10, 10]);
   const [isLoading, setIsLoading] = useState(true);
   const [isTxLoading, setIsTxLoading] = useState(false);
   const [isDisclaimer, setIsDisclaimer] = useState(true);
@@ -27,7 +27,8 @@ const Home: NextPage = () => {
       >
         <Mapbox
           setIsControlsActive={setIsControlsActive}
-          setLatLng={setLatLng}
+          setLatLng={setLngLat}
+          lngLat={lngLat}
           isCheckInActive={isCheckInActive}
           setIsLoading={setIsLoading}
         />
@@ -35,7 +36,7 @@ const Home: NextPage = () => {
           <CheckInControls isControlsActive={isControlsActive} setCheckInActive={setCheckInActive} />
         )}
       </div>
-      {isCheckInActive && <CheckinForm latLng={latLng} setIsTxLoading={setIsTxLoading} />}
+      {isCheckInActive && <CheckinForm lngLat={lngLat} setIsTxLoading={setIsTxLoading} />}
     </div>
   );
 };
