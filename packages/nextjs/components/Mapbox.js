@@ -4,7 +4,7 @@ import mapboxgl from "!mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import randomMapLoad from "~~/utils/randomizeMapboxLoad";
 
-mapboxgl.accessToken = process.env.NEXT_MAPBOX_DEFAULT_ACCESS_TOKEN | "";
+mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN || "";
 
 export default function Mapbox({
   setIsControlsActive = bool => bool,
