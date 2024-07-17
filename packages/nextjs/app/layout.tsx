@@ -11,7 +11,7 @@ const imageUrl = `${baseUrl}/thumbnail.jpg`;
 
 const title = "Astral Logbook";
 const titleTemplate = "%s | Astral Logbook";
-const description = "Built with 🏗 Scaffold-ETH 2";
+const description = "Record geotagged log entries onchain";
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),

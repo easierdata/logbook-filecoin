@@ -16,6 +16,14 @@ const Home: React.FC = () => {
       <a href="/register" style={{ color: "#009900", textDecoration: "underline" }}>
         Register a new entry →
       </a>
+      <br />
+      <a
+        href="https://docs.astral.global/docs/logbook/introduction"
+        target="_blank"
+        style={{ color: "#009900", textDecoration: "underline" }}
+      >
+        Read the docs →
+      </a>
     </main>
   );
 };
