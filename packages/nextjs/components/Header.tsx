@@ -75,6 +75,9 @@ export const Header = () => {
       </div>
 
       <div className="navbar-end flex-grow mr-4">
+        <a href="https://docs.astral.global/docs/logbook/introduction" target="_blank" className="inline-block">
+          <button className="btn btn-ghost btn-sm border-0 text-black mr-2">Docs</button>
+        </a>
         <RainbowKitCustomConnectButton />
         <FaucetButton />
       </div>
