@@ -18,6 +18,7 @@ export default function PintataUpload({
     ? process.env.NEXT_PUBLIC_GATEWAY_URL
     : "https://gateway.pinata.cloud";
 
+  console.log("[🧪 DEBUG](GATEWAY_URL):", GATEWAY_URL);
   const inputFile = useRef<any>(null);
 
   const uploadFile = async (fileToUpload: Blob) => {
