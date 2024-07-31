@@ -24,7 +24,7 @@ const Loading: React.FC<LoadingProps> = ({ txLoading }) => {
   }, [txLoading]);
 
   return (
-    <div className="hero min-h-screen bg-base-100 absolute z-10" style={{ opacity: 0.8 }}>
+    <div className="fixed inset-0 z-50 bg-base-100 flex items-center justify-center" style={{ opacity: 0.8 }}>
       <div className="hero-content text-center">
         <div className="max-w-md">
           <div
