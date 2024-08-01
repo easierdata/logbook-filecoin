@@ -8,6 +8,7 @@ import { SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
 import { ethers } from "ethers";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { useAccount } from "wagmi";
 import { ClockIcon, DocumentTextIcon, MapPinIcon } from "@heroicons/react/24/outline";
 import easConfig from "~~/EAS.config";
 import { IFormValues } from "~~/app/interface/interface";
@@ -33,6 +34,7 @@ const CheckinForm = ({ lngLat, setIsTxLoading }: { lngLat: number[]; setIsTxLoad
     mediaData: [""],
   });
 
+  const { isConnected } = useAccount();
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
 
   const handleDateChange = (date: Date | null) => {
@@ -61,6 +63,15 @@ const CheckinForm = ({ lngLat, setIsTxLoading }: { lngLat: number[]; setIsTxLoad
     const updatedFormValues = { ...formValues, [event.target.name]: event.target.value };
     setFormValues(updatedFormValues);
     console.log("Form values updated:", updatedFormValues); // Debugging
+  };
+
+  const handleClick = (event: React.MouseEvent<HTMLInputElement>) => {
+    if (!isConnected) {
+      event.preventDefault(); // Prevent form submission or any action
+      alert("Please connect to record log entry.");
+    } else {
+      handleSubmit(event);
+    }
   };
 
   // Set attestation from EAS api
@@ -196,7 +207,17 @@ const CheckinForm = ({ lngLat, setIsTxLoading }: { lngLat: number[]; setIsTxLoad
             />
           </label>
           <PintataUpload formValues={formValues} setFormValues={setFormValues} />
-          <input type="submit" value="Record Log Entry" className="input btn btn-primary bg-primary" />
+          <input
+            type="submit"
+            value={isConnected ? "Record Log Entry" : "Connect to record"}
+            className={`input btn ${
+              isConnected
+                ? "bg-primary text-white hover:bg-primary-dark cursor-pointer"
+                : "bg-gray-400 text-white cursor-not-allowed"
+            }`}
+            onClick={handleClick} // Control action with onClick
+          />
+          );
         </form>
       </div>
     </div>
