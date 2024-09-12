@@ -27,6 +27,7 @@ const CheckinFrom: NextPage = () => {
   }, [params.slug]);
 
   const { data } = useQuery(GET_ATTESTATION, {
+    // problem is this doesn't take chainId into account ...
     variables: { id: attestationUid },
   });
 

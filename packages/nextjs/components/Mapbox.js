@@ -185,5 +185,5 @@ export default function Mapbox({
     }
   }, [isCheckInActive, lngLat]);
 
-  return <div ref={mapContainer} className="card mx-4 mt-4 map-container" style={{ height, zIndex: -1 }} />;
+  return <div ref={mapContainer} className="card mx-4 mt-4 map-container" style={{ height /*, zIndex: -1*/ }} />;
 }
