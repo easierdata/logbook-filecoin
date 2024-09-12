@@ -53,7 +53,10 @@ export const ScaffoldEthAppWithProviders = ({ children }: { children: React.Reac
   const [mounted, setMounted] = useState(false);
 
   const client = new ApolloClient({
-    uri: "https://sepolia.easscan.org/graphql",
+    uri: "https://sepolia.easscan.org/graphql", 
+      //            ^^ for custom  queries, we need this to be dynamically set.
+      // The string is accessible from the EAS.config.ts file and the useChainId hook.
+      // I can't work out how to get the chainId from the wagmiConfig object since this isn't wrapped in the provider, or something ...
     cache: new InMemoryCache(),
   });
 
