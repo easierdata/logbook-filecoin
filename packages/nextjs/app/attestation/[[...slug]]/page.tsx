@@ -3,18 +3,15 @@
 import React, { useContext, useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useQuery } from "@apollo/client";
 import type { NextPage } from "next";
 import { ArrowUpRightIcon, ClockIcon, DocumentTextIcon, MapPinIcon } from "@heroicons/react/24/outline";
 import Mapbox from "~~/components/Mapbox";
 import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
-import { GET_ATTESTATION } from "~~/services/queries";
 import { EASContext } from "~~/components/EasContextProvider";
 import { SchemaEncoder } from "@ethereum-attestation-service/eas-sdk"
 import easConfig from "~~/EAS.config";
 import hexToDate from "~~/utils/hexToDate";
 import parseLocation from "~~/utils/parseLocation";
-import { LocationAttestation } from "~~/types/attestations";
 
 // import Link from "next/link";
 const GATEWAY_URL = process.env.NEXT_PUBLIC_GATEWAY_URL
@@ -26,7 +23,7 @@ const CheckinFrom: NextPage = () => {
   const { eas } = useContext(EASContext); // does this need error handling in case EAS is null or not ready?
 
   const [attestationUid, setAttestationUid] = useState("");
-  const [attestationData, setAttestationData] = useState<LocationAttestation | null>(null);
+  const [attestationData, setAttestationData] = useState<object | null>(null);
   const { targetNetwork } = useTargetNetwork();
 
   useEffect(() => {
@@ -34,7 +31,6 @@ const CheckinFrom: NextPage = () => {
     setAttestationUid(params.slug[1]);
   }, [params.slug]);
 
-  
   useEffect(() => {
     if (!eas) {
       console.error("EAS is not initialized");
@@ -45,23 +41,14 @@ const CheckinFrom: NextPage = () => {
       .getAttestation(attestationUid)
       .then(res => {
         const [
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           attestationId,
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           schemaUID,
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           expirationTime,
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           revocable,
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           refUID,
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           initData,
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           recipient,
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           attester,
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           completed,
           dataField,
         ] = res;
@@ -73,12 +60,19 @@ const CheckinFrom: NextPage = () => {
           const extractedData: { [key: string]: any } = {};
 
           decodedData.forEach(item => {
-            console.log("Array item:", item);
             const { name } = item; // Destructure name and value
             extractedData[name] = item; // Assign to the object, using `name` as the key
           });
-          console.log("Setting extractedData:", extractedData);
-          setAttestationData(extractedData as LocationAttestation);
+          extractedData.attester = attester;
+          extractedData.recipient = recipient;
+          extractedData.completed = completed;
+          extractedData.expirationTime = expirationTime;
+          extractedData.revocable = revocable;
+          extractedData.refUID = refUID;
+          extractedData.initData = initData;
+          extractedData.schemaUID = schemaUID;
+          extractedData.attestationId = attestationId;
+          setAttestationData(extractedData);
         } catch (err) {
           console.error("Error decoded attestation data ...", err);
         }
@@ -88,30 +82,15 @@ const CheckinFrom: NextPage = () => {
       });
   }, [eas, attestationUid]);
 
-  const { data } = useQuery(GET_ATTESTATION, {
-    // problem is this doesn't take chainId into account ...
-    variables: { id: attestationUid },
-  });
-
-  {
-    console.log("[🧪 DEBUG](data?.attestation):", data?.attestation);
-  }
-
-  console.log("AttestationData", attestationData);
-
   return (
     // TODO: handle error/ no attestation.
     <>
-      {console.log(
-        "[🧪 DEBUG](decodedDataJson):",
-        data?.attestation?.decodedDataJson && JSON.parse(data?.attestation?.decodedDataJson),
-      )}
       <div className="hero bg-base-200 text-black">
         <div className="overflow-x-auto">
           <div className="flex flex-col">
             <div className="h-52">
               <h1>Log Entry Details</h1>
-              {data?.attestation?.decodedDataJson && (
+              {attestationData && (
                 <Mapbox
                   isCheckInActive={true}
                   latLngAttestation={attestationData && parseLocation(attestationData?.location.value.value as string)}
@@ -120,17 +99,6 @@ const CheckinFrom: NextPage = () => {
             </div>
 
             <table className="table bg-primary-content border-gray-400">
-              {/* head */}
-              {/* <thead>
-              <tr>
-                <th></th>
-                <th>title</th>
-                <th>title</th>
-                <th>title</th>
-              </tr>
-              
-            </thead> */}
-
               <tbody>
                 <tr className="border-gray-200">
                   <td>
@@ -147,16 +115,12 @@ const CheckinFrom: NextPage = () => {
 
                   <td>
                     <strong className="text-sm">Lon: &nbsp;&nbsp;&nbsp; </strong>
-                    {(data?.attestation?.decodedDataJson &&
-                      parseLocation(attestationData?.location.value.value)[0]) ||
-                      "fetching"}
+                    {(attestationData && parseLocation(attestationData?.location.value.value)[0]) || "fetching"}
                   </td>
                   <td>
                     <strong className="text-sm">Lat: &nbsp;&nbsp;&nbsp;</strong>
 
-                    {(data?.attestation?.decodedDataJson &&
-                      parseLocation(attestationData?.location.value.value)[1]) ||
-                      "fetching"}
+                    {(attestationData && parseLocation(attestationData?.location.value.value)[1]) || "fetching"}
                   </td>
                 </tr>
                 <tr className="border-gray-200">
@@ -164,8 +128,7 @@ const CheckinFrom: NextPage = () => {
                     <ClockIcon className="h-5 w-5 text-primary" />
                   </td>
                   <td>
-                    {(data?.attestation?.decodedDataJson &&
-                      hexToDate(attestationData?.eventTimestamp.value.value.toString(16))) || // should filter by `name` rather than specify by index imo
+                    {(attestationData && hexToDate(attestationData?.eventTimestamp.value.value.toString(16))) ||
                       "fetching"}
                   </td>
                 </tr>
@@ -173,17 +136,13 @@ const CheckinFrom: NextPage = () => {
                   <td>
                     <DocumentTextIcon className="h-5 w-5 text-primary" />
                   </td>
-                  <td>
-                    {(data?.attestation?.decodedDataJson &&
-                      JSON.parse(data?.attestation?.decodedDataJson)[8].value.value) || // should filter by `name` rather than specify by index imo
-                      "fetching"}
-                  </td>
+                  <td>{(attestationData && attestationData?.memo.value.value) || "fetching"}</td>
                 </tr>
                 <tr className="border-gray-200">
                   <td className="text-sm">
                     <strong>From:</strong>
                   </td>
-                  <td>{(data?.attestation?.decodedDataJson && data?.attestation?.attester) || "fetching"}</td>
+                  <td>{(attestationData && attestationData?.attester) || "fetching"}</td>
                 </tr>
                 <tr className="border-gray-200">
                   <td className="text-sm">
@@ -191,10 +150,10 @@ const CheckinFrom: NextPage = () => {
                   </td>
                   <td>
                     {" "}
-                    {(data?.attestation?.decodedDataJson && (
+                    {(attestationData && (
                       <img
                         src={`https://${GATEWAY_URL}/ipfs/${
-                          JSON.parse(data?.attestation?.decodedDataJson)[7].value.value
+                          attestationData?.mediaData.value.value[0]
                         }`}
                         alt="file upload"
                         className="m-1 border-4 border-primary"
@@ -216,12 +175,6 @@ const CheckinFrom: NextPage = () => {
                     </Link>
                   </td>
                 </tr>
-                {/* row 6 */}
-                {/* TODO: parse attestation info (opt ethers abi decoder) */}
-                {/* <tr>
-                <td>data</td>
-                <td>{attestation?.data || "fetching"}</td>
-              </tr>*/}
               </tbody>
             </table>
           </div>

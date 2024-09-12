@@ -6,15 +6,15 @@ interface AttestationField<T> {
 }
 
 interface LocationAttestation {
-  eventTimestamp: AttestationField<bigint>;
-  location: AttestationField<string>;
-  locationType: AttestationField<string>;
-  mediaData: AttestationField<string[]>;
-  mediaType: AttestationField<string[]>;
-  memo: AttestationField<string>;
-  recipePayload: AttestationField<string[]>;
-  recipeType: AttestationField<string[]>;
-  srs: AttestationField<string>;
+  eventTimestamp: AttestationField<object>;
+  location: AttestationField<object>;
+  locationType: AttestationField<object>;
+  mediaData: AttestationField<object>;
+  mediaType: AttestationField<object>;
+  memo: AttestationField<object>;
+  recipePayload: AttestationField<object>;
+  recipeType: AttestationField<object>;
+  srs: AttestationField<object>;
 }
 
 export type { LocationAttestation, AttestationField };
