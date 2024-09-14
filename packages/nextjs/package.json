@@ -9,9 +9,10 @@
     "format": "prettier --write . '!(node_modules|.next|contracts)/**/*'",
     "lint": "next lint",
     "serve": "next start",
-    "start": "next dev",
+    "start": "NODE_OPTIONS='--max-old-space-size=4096' next start",
     "vercel": "vercel",
-    "vercel:yolo": "vercel --build-env NEXT_PUBLIC_IGNORE_BUILD_ERROR=true"
+    "vercel:yolo": "vercel --build-env NEXT_PUBLIC_IGNORE_BUILD_ERROR=true",
+    "start:large-heap": "NODE_OPTIONS='--max-old-space-size=4096' next start"
   },
   "dependencies": {
     "@heroicons/react": "~2.0.11",
