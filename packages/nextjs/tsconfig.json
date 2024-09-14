@@ -23,7 +23,8 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "tsBuildInfoFile": "./tsconfig.tsbuildinfo"
   },
   "include": [
     "next-env.d.ts",
