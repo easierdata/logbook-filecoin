@@ -55,7 +55,6 @@ export async function POST(request: NextRequest) {
 
     const { IpfsHash } = await res.json();
     console.log("File uploaded to IPFS:", IpfsHash);
-
     return NextResponse.json({ IpfsHash }, { status: 200 });
   } catch (e: any) {
     // adding more failure scenarios

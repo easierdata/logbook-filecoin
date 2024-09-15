@@ -36,6 +36,7 @@ const CheckinForm = ({ lngLat, setIsTxLoading }: { lngLat: number[]; setIsTxLoad
 
   const { isConnected } = useAccount();
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+  const [error, setError] = useState<string | null>(null);
 
   const handleDateChange = (date: Date | null) => {
     console.log("Selected date:", date); // Debugging
@@ -75,13 +76,65 @@ const CheckinForm = ({ lngLat, setIsTxLoading }: { lngLat: number[]; setIsTxLoad
   };
 
   // Set attestation from EAS api
-  function handleSubmit(event: SyntheticEvent) {
+  const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
     setIsTxLoading(true);
+    setError(null);
 
-    if (!isReady) return; // notify user
+    if (!isReady) {
+      setError("EAS is not ready");
+      setIsTxLoading(false);
+      return;
+    }
 
-    /* "
+    try {
+      const encodedData = schemaEncoder.encodeData([
+        {
+          name: "eventTimestamp",
+          value: formValues.eventTimestamp, // here we convert to nowInSeconds
+          type: "uint256",
+        },
+        {
+          name: "srs",
+          value: "EPSG:4326", // hard coded for v0.1
+          type: "string",
+        },
+        {
+          name: "locationType",
+          value: "DecimalDegrees<string>", // hard coded for v0.1
+          type: "string",
+        },
+        {
+          name: "location",
+          // value: `${formValues.longitude.toString()}, ${formValues.latitude.toString()}`,
+          value: `${formValues.longitude.toString()}, ${formValues.latitude.toString()}`.toString(),
+          type: "string",
+        },
+        {
+          name: "recipeType",
+          value: ["NEED A STRING ARRAY HERE"],
+          type: "string[]",
+        },
+        {
+          name: "recipePayload",
+          value: [ethers.toUtf8Bytes("NEED A BYTES ARRAY HERE")],
+          type: "bytes[]",
+        },
+        {
+          //  @RON: Here is where we put in the IPFS hashes
+          name: "mediaType",
+          value: formValues.mediaType, // storageSystem:MIMEtype
+          type: "string[]",
+        },
+        {
+          name: "mediaData",
+          value: formValues.mediaData, // CID, encoded as bytes somehow
+          type: "string[]",
+        },
+        { name: "memo", value: formValues.data, type: "string" },
+      ]);
+
+      /* "
     
     uint256 eventTimestamp,
     string srs,
@@ -93,54 +146,7 @@ const CheckinForm = ({ lngLat, setIsTxLoading }: { lngLat: number[]; setIsTxLoad
     bytes[] mediaData,
     string memo", */
 
-    const encodedData = schemaEncoder.encodeData([
-      {
-        name: "eventTimestamp",
-        value: formValues.eventTimestamp, // here we convert to nowInSeconds
-        type: "uint256",
-      },
-      {
-        name: "srs",
-        value: "EPSG:4326", // hard coded for v0.1
-        type: "string",
-      },
-      {
-        name: "locationType",
-        value: "DecimalDegrees<string>", // hard coded for v0.1
-        type: "string",
-      },
-      {
-        name: "location",
-        // value: `${formValues.longitude.toString()}, ${formValues.latitude.toString()}`,
-        value: `${formValues.longitude.toString()}, ${formValues.latitude.toString()}`.toString(),
-        type: "string",
-      },
-      {
-        name: "recipeType",
-        value: ["NEED A STRING ARRAY HERE"],
-        type: "string[]",
-      },
-      {
-        name: "recipePayload",
-        value: [ethers.toUtf8Bytes("NEED A BYTES ARRAY HERE")],
-        type: "bytes[]",
-      },
-      {
-        //  @RON: Here is where we put in the IPFS hashes
-        name: "mediaType",
-        value: formValues.mediaType, // storageSystem:MIMEtype
-        type: "string[]",
-      },
-      {
-        name: "mediaData",
-        value: formValues.mediaData, // CID, encoded as bytes somehow
-        type: "string[]",
-      },
-      { name: "memo", value: formValues.data, type: "string" },
-    ]);
-
-    eas
-      .attest({
+      const tx = await eas.attest({
         schema: schemaUID,
         data: {
           recipient: easConfig.EAS_CONTRACT_SEPOLIA, // To be read by chainId
@@ -148,19 +154,18 @@ const CheckinForm = ({ lngLat, setIsTxLoading }: { lngLat: number[]; setIsTxLoad
           revocable: true, // Be aware that if your schema is not revocable, this MUST be false
           data: encodedData,
         },
-      })
-      .then(tx => {
-        return tx.wait();
-      })
-      .then(newAttestationUID => {
-        console.log("[🧪 DEBUG](newAttestationUID):", newAttestationUID);
-        setIsTxLoading(false);
-        push(`/attestation/uid/${newAttestationUID}`);
-      })
-      .catch(err => {
-        console.log("[🧪 DEBUG](err):", err);
       });
-  }
+
+      const newAttestationUID = await tx.wait();
+      console.log("[🧪 DEBUG](newAttestationUID):", newAttestationUID);
+      push(`/attestation/uid/${newAttestationUID}`);
+    } catch (err) {
+      console.error("[🧪 DEBUG](err):", err);
+      setError(err.message || "An error occurred while creating the attestation");
+    } finally {
+      setIsTxLoading(false);
+    }
+  };
 
   return (
     <div className="flex items-center flex-col w-full flex-grow">
@@ -207,17 +212,17 @@ const CheckinForm = ({ lngLat, setIsTxLoading }: { lngLat: number[]; setIsTxLoad
             />
           </label>
           <PintataUpload formValues={formValues} setFormValues={setFormValues} />
+          {error && <p className="text-red-500">{error}</p>}
           <input
             type="submit"
             value={isConnected ? "Record Log Entry" : "Connect to record"}
             className={`input btn ${
               isConnected
-                ? "bg-primary text-white hover:bg-primary-dark cursor-pointer"
+                ? "bg-primary text-white hover:scale-105 hover:bg-dark-primary cursor-pointer"
                 : "bg-gray-400 text-white cursor-not-allowed"
             }`}
             onClick={handleClick} // Control action with onClick
           />
-          );
         </form>
       </div>
     </div>
