@@ -47,6 +47,12 @@ export async function POST(request: NextRequest) {
 
     clearTimeout(timeoutId);
 
+    // Check for 403 Forbidden error
+    if (res.status === 403) {
+      console.error("Access denied: ", res.statusText);
+      return NextResponse.json({ error: "Access denied. Please check your permissions." }, { status: 403 });
+    }
+
     if (!res.ok) {
       const errorData = await res.json();
       console.error("Pinata API error: ", errorData);

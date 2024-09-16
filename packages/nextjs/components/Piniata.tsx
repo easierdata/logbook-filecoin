@@ -55,9 +55,9 @@ export default function PinataUpload({
       const selectedFile = e.target.files[0];
 
       //check for allowed file types
-      const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
+      const allowedTypes = ["image/jpeg", "image/png", "image/gif", "application/pdf"];
       if (!allowedTypes.includes(selectedFile.type)) {
-        setError("Invalid file type. Please select a JPEG, PNG, or GIF image");
+        setError("Invalid file type. Please select a JPEG, PNG, GIF, or PDF file");
         return;
       }
 
@@ -81,7 +81,7 @@ export default function PinataUpload({
           type="file"
           ref={inputFile}
           onChange={handleChange}
-          accept="image/jpeg,image/png,image/gif"
+          accept="image/*,.pdf"
           name="file"
           // value={cid}
           className="input input-bordered file-input file-input-primary w-full bg-base-200 border-indigo-500 text-black p-0"
