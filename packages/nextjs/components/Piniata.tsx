@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { IFormValues } from "~~/app/interface/interface";
 
 export default function PinataUpload({
-  formValues,
+  //formValues,
   setFormValues,
 }: {
   formValues: IFormValues;
@@ -47,8 +47,8 @@ export default function PinataUpload({
   };
 
   useEffect(() => {
-    if (cid && formValues) setFormValues(prev => ({ ...prev, mediaData: [cid] }));
-  }, [cid, setFormValues, formValues]);
+    if (cid) setFormValues(prev => ({ ...prev, mediaData: [cid] }));
+  }, [cid, setFormValues]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {

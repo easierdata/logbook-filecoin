@@ -87,6 +87,16 @@ const CheckinFrom: NextPage = () => {
   const parsedLocation = (location: string) => {
     return location.split(",");
   };
+  //ensure the value is not undefined or null with optional chaining, is an array and has a string value with the hash
+
+  const mediaDataFetched = JSON.parse(data?.attestation?.decodedDataJson)[7]?.value?.value || "";
+
+  console.log("[🧪 DEBUG](mediaDataFetched):", mediaDataFetched);
+  const hasValidMedia =
+    Array.isArray(mediaDataFetched) &&
+    mediaDataFetched.length > 0 &&
+    typeof mediaDataFetched[0] === "string" &&
+    mediaDataFetched[0].trim() !== "";
 
   return (
     // TODO: handle error/ no attestation.
@@ -179,24 +189,22 @@ const CheckinFrom: NextPage = () => {
                       </td>
                       <td>{(data?.attestation?.decodedDataJson && data?.attestation?.attester) || "fetching"}</td>
                     </tr>
-                    <tr className="border-gray-200">
-                      <td className="text-sm">
-                        <strong>Media:</strong>
-                      </td>
-                      <td>
-                        {" "}
-                        {(data?.attestation?.decodedDataJson && (
+                    {hasValidMedia && (
+                      <tr className="border-gray-200">
+                        <td className="text-sm">
+                          <strong>Media:</strong>
+                        </td>
+                        {/* Conditionally render the media row */}
+
+                        <td>
                           <img
-                            src={`https://${GATEWAY_URL}/ipfs/${
-                              JSON.parse(data?.attestation?.decodedDataJson)[7].value.value
-                            }`}
+                            src={`https://${GATEWAY_URL}/ipfs/${mediaDataFetched[0]}`}
                             alt="file upload"
                             className="m-1 border-4 border-primary"
                           />
-                        )) ||
-                          "fetching"}
-                      </td>
-                    </tr>
+                        </td>
+                      </tr>
+                    )}
                     <tr>
                       <td>
                         <Link
