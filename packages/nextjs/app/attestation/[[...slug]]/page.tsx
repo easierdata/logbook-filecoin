@@ -108,10 +108,10 @@ const CheckinFrom: NextPage = () => {
             data?.attestation?.decodedDataJson && JSON.parse(data?.attestation?.decodedDataJson),
           )}
           <div className="hero bg-base-200 text-black">
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto mx-4 max-w-full">
               <div className="flex flex-col">
-                <div className="h-52">
-                  <h1>Log Entry Details</h1>
+                <div className="h-64">
+                  <h1 className="text-2xl font-black py-5 text-center">Log Entry Details</h1>
                   {data?.attestation?.decodedDataJson && (
                     <Mapbox
                       isCheckInActive={true}
@@ -123,7 +123,7 @@ const CheckinFrom: NextPage = () => {
                   )}
                 </div>
 
-                <table className="table bg-primary-content border-gray-400">
+                <table className="table bg-primary-content border-gray-400 mx-2 sm:mx-0 sm:flex sm:flex-col">
                   {/* head */}
                   {/* <thead>
               <tr>
@@ -135,9 +135,9 @@ const CheckinFrom: NextPage = () => {
               
             </thead> */}
 
-                  <tbody>
+                  <tbody className="">
                     <tr className="border-gray-200">
-                      <td>
+                      <td className="">
                         <MapPinIcon
                           className="h-5 w-5 text-primary flex-shrink-0 flex-grow-0"
                           style={{ flexBasis: "auto" }}
@@ -149,45 +149,53 @@ const CheckinFrom: NextPage = () => {
                       "fetching"}
                   </td> */}
 
-                      <td>
-                        <strong className="text-sm">Lon: &nbsp;&nbsp;&nbsp; </strong>
-                        {(data?.attestation?.decodedDataJson &&
-                          parsedLocation(JSON.parse(data?.attestation?.decodedDataJson)[3].value.value)[0]) ||
-                          "fetching"}
-                      </td>
-                      <td>
-                        <strong className="text-sm">Lat: &nbsp;&nbsp;&nbsp;</strong>
+                      <td className="flex flex-col sm:flex-row">
+                        <div className="sm:mr-4">
+                          {" "}
+                          {/* Adjust margin for larger screens */}
+                          <strong className="text-sm">Lon: &nbsp;&nbsp;&nbsp; </strong>
+                          {(data?.attestation?.decodedDataJson &&
+                            parsedLocation(JSON.parse(data?.attestation?.decodedDataJson)[3].value.value)[0]) ||
+                            "fetching"}
+                        </div>
 
-                        {(data?.attestation?.decodedDataJson &&
-                          parsedLocation(JSON.parse(data?.attestation?.decodedDataJson)[3].value.value)[1]) ||
-                          "fetching"}
+                        <div>
+                          <strong className="text-sm">Lat: &nbsp;&nbsp;&nbsp;</strong>
+                          {(data?.attestation?.decodedDataJson &&
+                            parsedLocation(JSON.parse(data?.attestation?.decodedDataJson)[3].value.value)[1]) ||
+                            "fetching"}
+                        </div>
                       </td>
                     </tr>
                     <tr className="border-gray-200">
-                      <td>
+                      <td className="">
                         <ClockIcon className="h-5 w-5 text-primary" />
                       </td>
-                      <td>
+                      <td className="">
                         {(data?.attestation?.decodedDataJson &&
                           hexToDate(JSON.parse(data?.attestation?.decodedDataJson)[0].value.value.hex.toString())) || // should filter by `name` rather than specify by index imo
                           "fetching"}
                       </td>
                     </tr>
                     <tr className="border-gray-200">
-                      <td>
+                      <td className="">
                         <DocumentTextIcon className="h-5 w-5 text-primary" />
                       </td>
                       <td>
                         {(data?.attestation?.decodedDataJson &&
                           JSON.parse(data?.attestation?.decodedDataJson)[8].value.value) || // should filter by `name` rather than specify by index imo
-                          "fetching"}
+                          "no memo added"}
                       </td>
                     </tr>
                     <tr className="border-gray-200">
-                      <td className="text-sm">
+                      <td className="text-sm ">
                         <strong>From:</strong>
                       </td>
-                      <td>{(data?.attestation?.decodedDataJson && data?.attestation?.attester) || "fetching"}</td>
+                      <td className="break-words max-w-xs">
+                        {data?.attestation?.decodedDataJson && data?.attestation?.attester
+                          ? `${data.attestation.attester.slice(0, 30)}...`
+                          : "fetching"}
+                      </td>
                     </tr>
                     {hasValidMedia && (
                       <tr className="border-gray-200">
@@ -205,13 +213,22 @@ const CheckinFrom: NextPage = () => {
                         </td>
                       </tr>
                     )}
-                    <tr>
-                      <td>
+                    <tr className="sm:flex-row justify-between w-full">
+                      <td className="sm:w-1/2 p-2">
+                        <Link target="_blank" href="/register">
+                          <div className="btn btn-outline btn-primary w-full">
+                            New log
+                            {/* <ArrowUpRightIcon className="ml-2 h-5 w-5" /> */}
+                          </div>
+                        </Link>
+                      </td>
+
+                      <td className="sm:w-1/2 p-2">
                         <Link
                           target="_blank"
                           href={`https://${targetNetwork.name}.easscan.org/attestation/view/${attestationUid}` || ""}
                         >
-                          <div className="btn btn-outline btn-primary">
+                          <div className="btn btn-outline btn-primary w-full">
                             View on EASScan
                             <ArrowUpRightIcon className="ml-2 h-5 w-5" />
                           </div>
