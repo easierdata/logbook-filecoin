@@ -24,55 +24,6 @@ export default function Mapbox({
     zoom: 5,
   };
 
-  /**
-   * Handle navigator.geolocation.getCurrentPosition()
-   *    - success and error callbacks
-   *
-   */
-  useEffect(() => {
-    function showPosition(position) {
-      console.log("showPosition called");
-
-      // Fly to center without setting lat,lon state
-      map?.current?.flyTo({
-        center: [position.coords.longitude, position.coords.latitude],
-        essential: true,
-        zoom: 10,
-        // duration: 3000,
-      });
-
-      console.log("✔📍 Map View set:[", position.coords.longitude, position.coords.latitude, "]");
-    }
-
-    function showError(error) {
-      console.log("showError called");
-      switch (error.code) {
-        case error.PERMISSION_DENIED:
-          console.log("User denied the request for Geolocation.");
-          break;
-        case error.POSITION_UNAVAILABLE:
-          console.log("Location information is unavailable.");
-          break;
-        case error.TIMEOUT:
-          console.log("The request to get user location timed out.");
-          break;
-        case error.UNKNOWN_ERROR:
-          console.log("An unknown error occurred.");
-          break;
-      }
-      console.log("Falling back to default coordinates:", defaultMapView);
-    }
-
-    if (navigator.geolocation) {
-      console.log("NAVIGATOR");
-      navigator.geolocation.getCurrentPosition(showPosition, showError);
-    } else {
-      console.log("Falling back to default coordinates:", defaultMapView);
-      // setLng(0);
-      // setLat(0); // repeat?
-    }
-  }, [defaultMapView]); // -> will only run once after initial render
-
   // Loading state side effect
   useEffect(() => {
     console.log("[🧪 DEBUG](loading useEffect)");
@@ -99,17 +50,11 @@ export default function Mapbox({
 
       // Set state variables
       console.log("📍[Mapbox] Attestation coordinates:", latLngAttestation[0], latLngAttestation[1])
-      console.log("latLngAttestation:", latLngAttestation);
-      // setLng(latLngAttestation[0]);
-      // setLat(latLngAttestation[1]);
 
+
+      // Add a pin to the map
       const el = document.createElement("div");
       el.className = "marker bg-primary";
-      // el.src = "/eas_logo.png";
-      // el.style.width = "40px";
-      // el.style.height = "40px";
-      // Add a pin to the map
-
       var newMarker = new mapboxgl.Marker(el)
         .setLngLat([latLngAttestation[0], latLngAttestation[1]])
         .addTo(map.current);

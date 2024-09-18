@@ -11,7 +11,7 @@ import Mapbox from "~~/components/Mapbox";
 const Register: NextPage = () => {
   const [isCheckInActive, setCheckInActive] = useState(false); // set to true when location is selected AND THEN user clicks RECORD
   const [isControlsActive, setIsControlsActive] = useState(false); // set to true when location is selected
-  const [lngLat, setLngLat] = useState([10, 10]); // user-input latLng from map tap
+  const [lngLat, setLngLat] = useState([10, 10]); // user-input latLng from map tap — this should useRef!
   const [isLoading, setIsLoading] = useState(true);
   const [isTxLoading, setIsTxLoading] = useState(false);
   const [isDisclaimer, setIsDisclaimer] = useState(true);
