@@ -2,17 +2,17 @@
 import React, { useEffect, useRef } from "react";
 import mapboxgl from "!mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import randomMapLoad from "~~/utils/randomizeMapboxLoad";
+import randomMapLoad from "~~/utils/randomizeMapboxLoad"; // Remove this functionality
 
-mapboxgl.accessToken = "pk.eyJ1Ijoicm9uY2h1Y2siLCJhIjoiY2x2Y2o5Z2drMGY3cjJrcGI4b2xsNzdtaCJ9.gi5RJ8qRhTSwfYuhVwhmvQ";
+mapboxgl.accessToken = "pk.eyJ1Ijoicm9uY2h1Y2siLCJhIjoiY2x2Y2o5Z2drMGY3cjJrcGI4b2xsNzdtaCJ9.gi5RJ8qRhTSwfYuhVwhmvQ"; // move to env
 
 export default function Mapbox({
-  setIsControlsActive = bool => bool,
-  height = "70vh",
-  setLatLng = arr => arr,
-  lngLat = [],
-  isCheckInActive = false,
-  latLngAttestation = [],
+  setIsControlsActive = bool => bool, // Activates "Record" button on map click
+  height = "70vh",                    // Default height of map container
+  setLatLng = arr => arr,             // Set state variable for lat,lon from map tap
+  lngLat = [],                        // lat,lon state variable, set from map tap
+  isCheckInActive = false,            // set to true after clicking "Record" button. Resizes map
+  latLngAttestation = [],             // State variable for lat,lon loaded from attestation
   setIsLoading = bool => bool,
 }) {
   const mapContainer = useRef(null);
@@ -88,37 +88,37 @@ export default function Mapbox({
       }).flyTo();
     }
 
-    // We should pull attestations overlay out into a different set of code no? Feels like we need a few mapping utils?
-    // if (latLngAttestation.length > 0) {
-    //   markersRef.current.forEach(marker => marker.remove());
-    //   markersRef.current = [];
+    // This code adds a marker to the map at the location of the attestation and flies to it
+    if (latLngAttestation.length > 0) {
+      markersRef.current.forEach(marker => marker.remove());
+      markersRef.current = [];
 
-    //   // Set state variables
-    //   console.log("📍[Mapbox] Attestation coordinates:", latLngAttestation[0], latLngAttestation[1])
-    //   console.log('latLngAttestation:', latLngAttestation);
-    //   // setLng(latLngAttestation[0]);
-    //   // setLat(latLngAttestation[1]);
+      // Set state variables
+      console.log("📍[Mapbox] Attestation coordinates:", latLngAttestation[0], latLngAttestation[1])
+      console.log("latLngAttestation:", latLngAttestation);
+      // setLng(latLngAttestation[0]);
+      // setLat(latLngAttestation[1]);
 
-    //   const el = document.createElement("div");
-    //   el.className = "marker bg-primary";
-    //   // el.src = "/eas_logo.png";
-    //   // el.style.width = "40px";
-    //   // el.style.height = "40px";
-    //   // Add a pin to the map
+      const el = document.createElement("div");
+      el.className = "marker bg-primary";
+      // el.src = "/eas_logo.png";
+      // el.style.width = "40px";
+      // el.style.height = "40px";
+      // Add a pin to the map
 
-    //   var newMarker = new mapboxgl.Marker(el)
-    //     .setLngLat([latLngAttestation[1], latLngAttestation[0]])
-    //     .addTo(map.current);
+      var newMarker = new mapboxgl.Marker(el)
+        .setLngLat([latLngAttestation[0], latLngAttestation[1]])
+        .addTo(map.current);
 
-    //   // Animated flyTo to position marker at center of map
-    //   map.current.flyTo({
-    //     center: [latLngAttestation[1], latLngAttestation[0]],
-    //     essential: true,
-    //   });
+      // Animated flyTo to position marker at center of map
+      map.current.flyTo({
+        center: [latLngAttestation[0], latLngAttestation[1]],
+        essential: true,
+      });
 
-    //   // Add to state
-    //   markersRef.current.push(newMarker);
-    // }
+      // Add to state
+      markersRef.current.push(newMarker);
+    }
 
     // map.current?.on("move", () => {
     //   setLng(map.current.getCenter().lng.toFixed(4));
