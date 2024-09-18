@@ -2,7 +2,6 @@
 import React, { useEffect, useRef } from "react";
 import mapboxgl from "!mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import randomMapLoad from "~~/utils/randomizeMapboxLoad"; // Remove this functionality
 
 mapboxgl.accessToken = "pk.eyJ1Ijoicm9uY2h1Y2siLCJhIjoiY2x2Y2o5Z2drMGY3cjJrcGI4b2xsNzdtaCJ9.gi5RJ8qRhTSwfYuhVwhmvQ"; // move to env
 
@@ -18,7 +17,12 @@ export default function Mapbox({
   const mapContainer = useRef(null);
   const map = useRef(null);
   const markersRef = useRef([]);
-  const randomMapView = randomMapLoad();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const defaultMapView = {
+    name: "Europe",
+    center: { lat: 50.1109, lng: 8.6821 },
+    zoom: 5,
+  };
 
   /**
    * Handle navigator.geolocation.getCurrentPosition()
@@ -56,18 +60,18 @@ export default function Mapbox({
           console.log("An unknown error occurred.");
           break;
       }
-      console.log("Falling back to random coordinates:", randomMapView);
+      console.log("Falling back to default coordinates:", defaultMapView);
     }
 
     if (navigator.geolocation) {
       console.log("NAVIGATOR");
       navigator.geolocation.getCurrentPosition(showPosition, showError);
     } else {
-      console.log("Falling back to random coordinates:", randomMapView);
+      console.log("Falling back to default coordinates:", defaultMapView);
       // setLng(0);
       // setLat(0); // repeat?
     }
-  }, [randomMapView]); // -> will only run once after initial render
+  }, [defaultMapView]); // -> will only run once after initial render
 
   // Loading state side effect
   useEffect(() => {
@@ -77,13 +81,13 @@ export default function Mapbox({
 
   // Init map side effect
   useEffect(() => {
-    // If map is not initialized, create a new map instance positioned at random location
+    // If map is not initialized, create a new map instance positioned at default location
     if (!map.current) {
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
         style: "mapbox://styles/mapbox/standard",
-        center: [randomMapView.center.lng, randomMapView.center.lat],
-        zoom: randomMapView.zoom,
+        center: [defaultMapView.center.lng, defaultMapView.center.lat],
+        zoom: defaultMapView.zoom,
         attributionControl: false,
       }).flyTo();
     }
@@ -160,7 +164,7 @@ export default function Mapbox({
       setIsControlsActive && setIsControlsActive(true);
       // Done loading
     });
-  }, [latLngAttestation, setLatLng, randomMapView, setIsControlsActive]);
+  }, [latLngAttestation, setLatLng, defaultMapView, setIsControlsActive]);
 
   // Canvas resize side effect
   useEffect(() => {
