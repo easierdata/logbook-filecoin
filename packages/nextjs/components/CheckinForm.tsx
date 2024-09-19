@@ -8,16 +8,12 @@ import { SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
 import { ethers } from "ethers";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { Config, UseChainIdParameters, useAccount, useChainId } from "wagmi";
 import { ClockIcon, DocumentTextIcon, MapPinIcon } from "@heroicons/react/24/outline";
 import easConfig from "~~/EAS.config";
 import { IFormValues } from "~~/app/interface/interface";
 import { EASContext } from "~~/components/EasContextProvider";
-
-// To add DaisyUI styles
-
-// To add DaisyUI styles
-
-// import Link from "next/link";
+import { wagmiConfig } from "~~/services/web3/wagmiConfig";
 
 const CheckinForm = ({ lngLat, setIsTxLoading }: { lngLat: number[]; setIsTxLoading: Dispatch<boolean> }) => {
   // NextJS redirect
@@ -33,123 +29,130 @@ const CheckinForm = ({ lngLat, setIsTxLoading }: { lngLat: number[]; setIsTxLoad
     mediaData: [""],
   });
 
+  const { isConnected } = useAccount();
+  const chainId = useChainId(wagmiConfig as UseChainIdParameters<Config>);
+
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+  const [error, setError] = useState<string | null>(null);
 
   const handleDateChange = (date: Date | null) => {
-    console.log("Selected date:", date); // Debugging
     if (date) {
       setSelectedDate(date);
       setFormValues(prevFormValues => ({
-        ...prevFormValues,
+        ...prevFormValues, 
+        eventTimestamp: Math.floor(Number(date) / 1000),
         timestamp: date,
       }));
-      console.log("Form values updated with new date:", formValues); // Debugging
     }
   };
 
   // Use EAS SDK
-  const { eas, isReady } = useContext(EASContext);
+  const { eas, isReady } = useContext(EASContext); // does this need error handling in case EAS is null or not ready?
   // const [attestation, setAttestation] = useState<Attestation>();
 
   // Initialize SchemaEncoder with the schema string
-  const schemaEncoder = new SchemaEncoder(easConfig.RAW_SCHEMA_STRING);
-
-  const schemaUID = easConfig.SCHEMA_UID_SEPOLIA; // TODO: read according to chainId
+  const schemaEncoder = new SchemaEncoder(easConfig.schema.rawString);
+  const schemaUID = easConfig.chains[chainId.toString() as keyof typeof easConfig.chains].schemaUID;
 
   const handleChange = (event: { preventDefault?: () => void; target: { name: string; value: any } }) => {
     if (event.preventDefault) event.preventDefault();
     const updatedFormValues = { ...formValues, [event.target.name]: event.target.value };
     setFormValues(updatedFormValues);
-    console.log("Form values updated:", updatedFormValues); // Debugging
+  };
+
+  const handleClick = (event: React.MouseEvent<HTMLInputElement>) => {
+    if (!isConnected) {
+      event.preventDefault(); // Prevent form submission or any action
+      alert("Please connect to record log entry.");
+    } else {
+      handleSubmit(event);
+    }
   };
 
   // Set attestation from EAS api
-  function handleSubmit(event: SyntheticEvent) {
+  const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
     setIsTxLoading(true);
+    setError(null);
 
-    if (!isReady) return; // notify user
+    if (!isReady) {
+      setError("EAS is not ready");
+      setIsTxLoading(false);
+      return;
+    }
 
-    /* "
-    
-    uint256 eventTimestamp,
-    string srs,
-    string locationType,
-    bytes location,
-    string[] recipeType,
-    bytes[] recipePayload,
-    string[] mediaType,
-    bytes[] mediaData,
-    string memo", */
+    if (!schemaUID) {
+      throw new Error("Schema UID is null, cannot proceed with attestation");
+    }
 
-    const encodedData = schemaEncoder.encodeData([
-      {
-        name: "eventTimestamp",
-        value: formValues.eventTimestamp, // here we convert to nowInSeconds
-        type: "uint256",
-      },
-      {
-        name: "srs",
-        value: "EPSG:4326", // hard coded for v0.1
-        type: "string",
-      },
-      {
-        name: "locationType",
-        value: "DecimalDegrees<string>", // hard coded for v0.1
-        type: "string",
-      },
-      {
-        name: "location",
-        // value: `${formValues.longitude.toString()}, ${formValues.latitude.toString()}`,
-        value: `${formValues.longitude.toString()}, ${formValues.latitude.toString()}`.toString(),
-        type: "string",
-      },
-      {
-        name: "recipeType",
-        value: ["NEED A STRING ARRAY HERE"],
-        type: "string[]",
-      },
-      {
-        name: "recipePayload",
-        value: [ethers.toUtf8Bytes("NEED A BYTES ARRAY HERE")],
-        type: "bytes[]",
-      },
-      {
-        //  @RON: Here is where we put in the IPFS hashes
-        name: "mediaType",
-        value: formValues.mediaType, // storageSystem:MIMEtype
-        type: "string[]",
-      },
-      {
-        name: "mediaData",
-        value: formValues.mediaData, // CID, encoded as bytes somehow
-        type: "string[]",
-      },
-      { name: "memo", value: formValues.data, type: "string" },
-    ]);
+    try {
+      const encodedData = schemaEncoder.encodeData([
+        {
+          name: "eventTimestamp",
+          value: formValues.eventTimestamp, // here we convert to nowInSeconds
+          type: "uint256",
+        },
+        {
+          name: "srs",
+          value: "EPSG:4326", // hard coded for v0.1
+          type: "string",
+        },
+        {
+          name: "locationType",
+          value: "DecimalDegrees<string>", // hard coded for v0.1
+          type: "string",
+        },
+        {
+          name: "location",
+          // value: `${formValues.longitude.toString()}, ${formValues.latitude.toString()}`,
+          value: `${formValues.longitude.toString()}, ${formValues.latitude.toString()}`.toString(),
+          type: "string",
+        },
+        {
+          name: "recipeType",
+          value: ["NEED A STRING ARRAY HERE"],
+          type: "string[]",
+        },
+        {
+          name: "recipePayload",
+          value: [ethers.toUtf8Bytes("NEED A BYTES ARRAY HERE")],
+          type: "bytes[]",
+        },
+        {
+          name: "mediaType",
+          value: formValues.mediaType, // storageSystem:MIMEtype
+          type: "string[]",
+        },
+        {
+          name: "mediaData",
+          value: formValues.mediaData, // CID, encoded as bytes somehow
+          type: "string[]",
+        },
+        { name: "memo", value: formValues.data, type: "string" },
+      ]);
 
-    eas
-      .attest({
+      const tx = await eas?.attest({
         schema: schemaUID,
         data: {
-          recipient: easConfig.EAS_CONTRACT_SEPOLIA, // To be read by chainId
+          recipient: easConfig.chains[String(chainId) as keyof typeof easConfig.chains].easContractAddress, // To be read by chainId: easConfig.chains[chainId].EAScontract;
           expirationTime: 0n,
           revocable: true, // Be aware that if your schema is not revocable, this MUST be false
           data: encodedData,
         },
-      })
-      .then(tx => {
-        return tx.wait();
-      })
-      .then(newAttestationUID => {
-        console.log("[🧪 DEBUG](newAttestationUID):", newAttestationUID);
-        setIsTxLoading(false);
-        push(`/attestation/uid/${newAttestationUID}`);
-      })
-      .catch(err => {
-        console.log("[🧪 DEBUG](err):", err);
       });
-  }
+
+      const newAttestationUID = await tx?.wait();
+      push(`/attestation/uid/${newAttestationUID}`);
+    } catch (err) {
+      if (err instanceof Error) {
+        setError((err.message as string) || "An error occurred while creating the attestation");
+      } else {
+        setError("An error occurred while creating the attestationm");
+      }
+    } finally {
+      setIsTxLoading(false);
+    }
+  };
 
   return (
     <div className="flex items-center flex-col w-full flex-grow">
@@ -196,7 +199,17 @@ const CheckinForm = ({ lngLat, setIsTxLoading }: { lngLat: number[]; setIsTxLoad
             />
           </label>
           <PintataUpload formValues={formValues} setFormValues={setFormValues} />
-          <input type="submit" value="Record Log Entry" className="input btn btn-primary bg-primary" />
+          {error && <p className="text-red-500">{error}</p>}
+          <input
+            type="submit"
+            value={isConnected ? "Record Log Entry" : "Connect to record"}
+            className={`input btn ${
+              isConnected
+                ? "bg-primary text-white hover:scale-105 hover:bg-dark-primary cursor-pointer"
+                : "bg-gray-400 text-white cursor-not-allowed"
+            }`}
+            onClick={handleClick} // Control action with onClick
+          />
         </form>
       </div>
     </div>

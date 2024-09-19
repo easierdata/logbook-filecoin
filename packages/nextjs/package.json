@@ -5,13 +5,14 @@
   "scripts": {
     "build": "next build",
     "check-types": "tsc --noEmit --incremental",
-    "dev": "next dev",
+    "dev": "cross-env NODE_OPTIONS='--max-old-space-size=4096' next dev",
     "format": "prettier --write . '!(node_modules|.next|contracts)/**/*'",
     "lint": "next lint",
     "serve": "next start",
-    "start": "next dev",
+    "start": "cross-env NODE_OPTIONS='--max-old-space-size=4096' next start",
     "vercel": "vercel",
-    "vercel:yolo": "vercel --build-env NEXT_PUBLIC_IGNORE_BUILD_ERROR=true"
+    "vercel:yolo": "vercel --build-env NEXT_PUBLIC_IGNORE_BUILD_ERROR=true",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@heroicons/react": "~2.0.11",
@@ -44,6 +45,7 @@
     "@typescript-eslint/eslint-plugin": "~5.40.0",
     "abitype": "1.0.2",
     "autoprefixer": "~10.4.12",
+    "cross-env": "^7.0.3",
     "eslint": "~8.24.0",
     "eslint-config-next": "~14.0.4",
     "eslint-config-prettier": "~8.5.0",
@@ -54,5 +56,13 @@
     "type-fest": "~4.6.0",
     "typescript": "~5.1.6",
     "vercel": "~32.4.1"
+  },
+  "husky": {
+    "hooks": {}
+    },
+  "lint-staged": {
+    "*.{js,ts,tsx}": [
+      "eslint --fix"
+    ]
   }
 }

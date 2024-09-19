@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
     "target": "es2020",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -18,25 +14,25 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "types": ["chrome"],
+    "allowSyntheticDefaultImports": true,
     "paths": {
-      "~~/*": [
-        "./*"
-      ]
+      "~~/*": ["./*"]
     },
     "plugins": [
       {
         "name": "next"
       }
-    ]
+    ],
+    "tsBuildInfoFile": "./tsconfig.tsbuildinfo"
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "components/Mapbox.js"
+    "components/Mapbox.js",
+    "node_modules/**/*"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": []
 }
