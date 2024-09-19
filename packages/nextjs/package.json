@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "cross-env NODE_OPTIONS='--max-old-space-size=4096' next build",
+    "build": "next build",
     "check-types": "tsc --noEmit --incremental",
     "dev": "cross-env NODE_OPTIONS='--max-old-space-size=4096' next dev",
     "format": "prettier --write . '!(node_modules|.next|contracts)/**/*'",
