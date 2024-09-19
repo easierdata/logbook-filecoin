@@ -2660,6 +2660,7 @@ __metadata:
     abitype: 1.0.2
     autoprefixer: ~10.4.12
     blo: ~1.0.1
+    cross-env: ^7.0.3
     daisyui: 4.5.0
     eslint: ~8.24.0
     eslint-config-next: ~14.0.4
