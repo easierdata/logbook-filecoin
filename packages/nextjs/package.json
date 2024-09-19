@@ -58,10 +58,8 @@
     "vercel": "~32.4.1"
   },
   "husky": {
-    "hooks": {
-      // "pre-commit": "yarn lint-staged --verbose"
-    }
-  },
+    "hooks": {}
+    },
   "lint-staged": {
     "*.{js,ts,tsx}": [
       "eslint --fix"
