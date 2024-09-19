@@ -2,72 +2,27 @@
 import React, { useEffect, useRef } from "react";
 import mapboxgl from "!mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import randomMapLoad from "~~/utils/randomizeMapboxLoad";
 
-mapboxgl.accessToken = "pk.eyJ1Ijoicm9uY2h1Y2siLCJhIjoiY2x2Y2o5Z2drMGY3cjJrcGI4b2xsNzdtaCJ9.gi5RJ8qRhTSwfYuhVwhmvQ";
+mapboxgl.accessToken = "pk.eyJ1Ijoicm9uY2h1Y2siLCJhIjoiY2x2Y2o5Z2drMGY3cjJrcGI4b2xsNzdtaCJ9.gi5RJ8qRhTSwfYuhVwhmvQ"; // move to env
 
 export default function Mapbox({
-  setIsControlsActive = bool => bool,
-  height = "70vh",
-  setLatLng = arr => arr,
-  lngLat = [],
-  isCheckInActive = false,
-  latLngAttestation = [],
+  setIsControlsActive = bool => bool, // Activates "Record" button on map click
+  height = "70vh",                    // Default height of map container
+  setLatLng = arr => arr,             // Set state variable for lat,lon from map tap
+  lngLat = [],                        // lat,lon state variable, set from map tap
+  isCheckInActive = false,            // set to true after clicking "Record" button. Resizes map
+  latLngAttestation = [],             // State variable for lat,lon loaded from attestation
   setIsLoading = bool => bool,
 }) {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const markersRef = useRef([]);
-  const randomMapView = randomMapLoad();
-
-  /**
-   * Handle navigator.geolocation.getCurrentPosition()
-   *    - success and error callbacks
-   *
-   */
-  useEffect(() => {
-    function showPosition(position) {
-      console.log("showPosition called");
-
-      // Fly to center without setting lat,lon state
-      map?.current?.flyTo({
-        center: [position.coords.longitude, position.coords.latitude],
-        essential: true,
-        zoom: 10,
-        // duration: 3000,
-      });
-
-      console.log("✔📍 Map View set:[", position.coords.longitude, position.coords.latitude, "]");
-    }
-
-    function showError(error) {
-      console.log("showError called");
-      switch (error.code) {
-        case error.PERMISSION_DENIED:
-          console.log("User denied the request for Geolocation.");
-          break;
-        case error.POSITION_UNAVAILABLE:
-          console.log("Location information is unavailable.");
-          break;
-        case error.TIMEOUT:
-          console.log("The request to get user location timed out.");
-          break;
-        case error.UNKNOWN_ERROR:
-          console.log("An unknown error occurred.");
-          break;
-      }
-      console.log("Falling back to random coordinates:", randomMapView);
-    }
-
-    if (navigator.geolocation) {
-      console.log("NAVIGATOR");
-      navigator.geolocation.getCurrentPosition(showPosition, showError);
-    } else {
-      console.log("Falling back to random coordinates:", randomMapView);
-      // setLng(0);
-      // setLat(0); // repeat?
-    }
-  }, [randomMapView]); // -> will only run once after initial render
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const defaultMapView = {
+    name: "Europe",
+    center: { lat: 50.1109, lng: 8.6821 },
+    zoom: 5,
+  };
 
   // Loading state side effect
   useEffect(() => {
@@ -77,48 +32,43 @@ export default function Mapbox({
 
   // Init map side effect
   useEffect(() => {
-    // If map is not initialized, create a new map instance positioned at random location
+    // If map is not initialized, create a new map instance positioned at default location
     if (!map.current) {
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
         style: "mapbox://styles/mapbox/standard",
-        center: [randomMapView.center.lng, randomMapView.center.lat],
-        zoom: randomMapView.zoom,
+        center: [defaultMapView.center.lng, defaultMapView.center.lat],
+        zoom: defaultMapView.zoom,
         attributionControl: false,
       }).flyTo();
     }
 
-    // We should pull attestations overlay out into a different set of code no? Feels like we need a few mapping utils?
-    // if (latLngAttestation.length > 0) {
-    //   markersRef.current.forEach(marker => marker.remove());
-    //   markersRef.current = [];
+    // This code adds a marker to the map at the location of the attestation and flies to it
+    if (latLngAttestation.length > 0) {
+      markersRef.current.forEach(marker => marker.remove());
+      markersRef.current = [];
 
-    //   // Set state variables
-    //   console.log("📍[Mapbox] Attestation coordinates:", latLngAttestation[0], latLngAttestation[1])
-    //   console.log('latLngAttestation:', latLngAttestation);
-    //   // setLng(latLngAttestation[0]);
-    //   // setLat(latLngAttestation[1]);
+      // Set state variables
+      console.log("📍[Mapbox] Attestation coordinates:", latLngAttestation[0], latLngAttestation[1])
 
-    //   const el = document.createElement("div");
-    //   el.className = "marker bg-primary";
-    //   // el.src = "/eas_logo.png";
-    //   // el.style.width = "40px";
-    //   // el.style.height = "40px";
-    //   // Add a pin to the map
 
-    //   var newMarker = new mapboxgl.Marker(el)
-    //     .setLngLat([latLngAttestation[1], latLngAttestation[0]])
-    //     .addTo(map.current);
+      // Add a pin to the map
+      const el = document.createElement("div");
+      el.className = "marker bg-primary";
+      var newMarker = new mapboxgl.Marker(el)
+        .setLngLat([latLngAttestation[0], latLngAttestation[1]])
+        .addTo(map.current);
 
-    //   // Animated flyTo to position marker at center of map
-    //   map.current.flyTo({
-    //     center: [latLngAttestation[1], latLngAttestation[0]],
-    //     essential: true,
-    //   });
+      // Animated flyTo to position marker at center of map
+      map.current.flyTo({
+        center: [latLngAttestation[0], latLngAttestation[1]],
+        zoom: 11.5,
+        essential: true,
+      });
 
-    //   // Add to state
-    //   markersRef.current.push(newMarker);
-    // }
+      // Add to state
+      markersRef.current.push(newMarker);
+    }
 
     // map.current?.on("move", () => {
     //   setLng(map.current.getCenter().lng.toFixed(4));
@@ -127,6 +77,8 @@ export default function Mapbox({
     // });
 
     map.current?.on("click", e => {
+
+      if (latLngAttestation.length > 0) { return; }
       // Clear existing markers
       markersRef.current.forEach(marker => marker.remove());
       markersRef.current = [];
@@ -160,7 +112,7 @@ export default function Mapbox({
       setIsControlsActive && setIsControlsActive(true);
       // Done loading
     });
-  }, [latLngAttestation, setLatLng, randomMapView, setIsControlsActive]);
+  }, [latLngAttestation, setLatLng, defaultMapView, setIsControlsActive]);
 
   // Canvas resize side effect
   useEffect(() => {
