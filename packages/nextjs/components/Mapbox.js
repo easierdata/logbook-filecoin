@@ -77,8 +77,9 @@ export default function Mapbox({
     // });
 
     map.current?.on("click", e => {
-
-      if (latLngAttestation.length > 0) { return; }
+      if (latLngAttestation.length > 0) {
+        return;
+      }
       // Clear existing markers
       markersRef.current.forEach(marker => marker.remove());
       markersRef.current = [];
