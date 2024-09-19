@@ -39,7 +39,8 @@ const CheckinForm = ({ lngLat, setIsTxLoading }: { lngLat: number[]; setIsTxLoad
     if (date) {
       setSelectedDate(date);
       setFormValues(prevFormValues => ({
-        ...prevFormValues,
+        ...prevFormValues, 
+        eventTimestamp: Math.floor(Number(date) / 1000),
         timestamp: date,
       }));
     }
@@ -57,7 +58,6 @@ const CheckinForm = ({ lngLat, setIsTxLoading }: { lngLat: number[]; setIsTxLoad
     if (event.preventDefault) event.preventDefault();
     const updatedFormValues = { ...formValues, [event.target.name]: event.target.value };
     setFormValues(updatedFormValues);
-    console.log("Form values updated:", updatedFormValues); // Debugging
   };
 
   const handleClick = (event: React.MouseEvent<HTMLInputElement>) => {
@@ -142,11 +142,9 @@ const CheckinForm = ({ lngLat, setIsTxLoading }: { lngLat: number[]; setIsTxLoad
       });
 
       const newAttestationUID = await tx?.wait();
-      console.log("[🧪 DEBUG](newAttestationUID):", newAttestationUID);
       push(`/attestation/uid/${newAttestationUID}`);
     } catch (err) {
       if (err instanceof Error) {
-        console.error("[🧪 DEBUG](err):", err);
         setError((err.message as string) || "An error occurred while creating the attestation");
       } else {
         setError("An error occurred while creating the attestationm");
