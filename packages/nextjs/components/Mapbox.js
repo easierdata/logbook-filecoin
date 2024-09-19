@@ -77,8 +77,9 @@ export default function Mapbox({
     // });
 
     map.current?.on("click", e => {
-
-      if (latLngAttestation.length > 0) { return; }
+      if (latLngAttestation.length > 0) {
+        return;
+      }
       // Clear existing markers
       markersRef.current.forEach(marker => marker.remove());
       markersRef.current = [];
@@ -137,5 +138,5 @@ export default function Mapbox({
     }
   }, [isCheckInActive, lngLat]);
 
-  return <div ref={mapContainer} className="card mx-4 mt-4 map-container" style={{ height }} />;
+  return <div ref={mapContainer} className="card mx-4 mt-4 map-container" style={{ height /*, zIndex: -1*/ }} />;
 }
