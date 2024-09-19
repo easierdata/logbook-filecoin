@@ -8,17 +8,12 @@ import { SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
 import { ethers } from "ethers";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { useAccount } from "wagmi";
+import { Config, UseChainIdParameters, useAccount, useChainId } from "wagmi";
 import { ClockIcon, DocumentTextIcon, MapPinIcon } from "@heroicons/react/24/outline";
 import easConfig from "~~/EAS.config";
 import { IFormValues } from "~~/app/interface/interface";
 import { EASContext } from "~~/components/EasContextProvider";
-
-// To add DaisyUI styles
-
-// To add DaisyUI styles
-
-// import Link from "next/link";
+import { wagmiConfig } from "~~/services/web3/wagmiConfig";
 
 const CheckinForm = ({ lngLat, setIsTxLoading }: { lngLat: number[]; setIsTxLoading: Dispatch<boolean> }) => {
   // NextJS redirect
@@ -35,29 +30,28 @@ const CheckinForm = ({ lngLat, setIsTxLoading }: { lngLat: number[]; setIsTxLoad
   });
 
   const { isConnected } = useAccount();
+  const chainId = useChainId(wagmiConfig as UseChainIdParameters<Config>);
+
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
   const [error, setError] = useState<string | null>(null);
 
   const handleDateChange = (date: Date | null) => {
-    console.log("Selected date:", date); // Debugging
     if (date) {
       setSelectedDate(date);
       setFormValues(prevFormValues => ({
         ...prevFormValues,
         timestamp: date,
       }));
-      console.log("Form values updated with new date:", formValues); // Debugging
     }
   };
 
   // Use EAS SDK
-  const { eas, isReady } = useContext(EASContext);
+  const { eas, isReady } = useContext(EASContext); // does this need error handling in case EAS is null or not ready?
   // const [attestation, setAttestation] = useState<Attestation>();
 
   // Initialize SchemaEncoder with the schema string
-  const schemaEncoder = new SchemaEncoder(easConfig.RAW_SCHEMA_STRING);
-
-  const schemaUID = easConfig.SCHEMA_UID_SEPOLIA; // TODO: read according to chainId
+  const schemaEncoder = new SchemaEncoder(easConfig.schema.rawString);
+  const schemaUID = easConfig.chains[chainId.toString() as keyof typeof easConfig.chains].schemaUID;
 
   const handleChange = (event: { preventDefault?: () => void; target: { name: string; value: any } }) => {
     if (event.preventDefault) event.preventDefault();
@@ -85,6 +79,10 @@ const CheckinForm = ({ lngLat, setIsTxLoading }: { lngLat: number[]; setIsTxLoad
       setError("EAS is not ready");
       setIsTxLoading(false);
       return;
+    }
+
+    if (!schemaUID) {
+      throw new Error("Schema UID is null, cannot proceed with attestation");
     }
 
     try {
@@ -121,7 +119,6 @@ const CheckinForm = ({ lngLat, setIsTxLoading }: { lngLat: number[]; setIsTxLoad
           type: "bytes[]",
         },
         {
-          //  @RON: Here is where we put in the IPFS hashes
           name: "mediaType",
           value: formValues.mediaType, // storageSystem:MIMEtype
           type: "string[]",
@@ -134,34 +131,26 @@ const CheckinForm = ({ lngLat, setIsTxLoading }: { lngLat: number[]; setIsTxLoad
         { name: "memo", value: formValues.data, type: "string" },
       ]);
 
-      /* "
-    
-    uint256 eventTimestamp,
-    string srs,
-    string locationType,
-    bytes location,
-    string[] recipeType,
-    bytes[] recipePayload,
-    string[] mediaType,
-    bytes[] mediaData,
-    string memo", */
-
-      const tx = await eas.attest({
+      const tx = await eas?.attest({
         schema: schemaUID,
         data: {
-          recipient: easConfig.EAS_CONTRACT_SEPOLIA, // To be read by chainId
+          recipient: easConfig.chains[String(chainId) as keyof typeof easConfig.chains].easContractAddress, // To be read by chainId: easConfig.chains[chainId].EAScontract;
           expirationTime: 0n,
           revocable: true, // Be aware that if your schema is not revocable, this MUST be false
           data: encodedData,
         },
       });
 
-      const newAttestationUID = await tx.wait();
+      const newAttestationUID = await tx?.wait();
       console.log("[🧪 DEBUG](newAttestationUID):", newAttestationUID);
       push(`/attestation/uid/${newAttestationUID}`);
     } catch (err) {
-      console.error("[🧪 DEBUG](err):", err);
-      setError(err.message || "An error occurred while creating the attestation");
+      if (err instanceof Error) {
+        console.error("[🧪 DEBUG](err):", err);
+        setError((err.message as string) || "An error occurred while creating the attestation");
+      } else {
+        setError("An error occurred while creating the attestationm");
+      }
     } finally {
       setIsTxLoading(false);
     }
