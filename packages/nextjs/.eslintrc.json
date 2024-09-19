@@ -4,7 +4,7 @@
   "plugins": ["prettier"],
   "rules": {
     "@typescript-eslint/no-unused-vars": [
-      "error", 
+      "error",
       {
         "vars": "all",
         "varsIgnorePattern": "^_",
@@ -18,7 +18,7 @@
       "warn",
       {
         "endOfLine": "auto",
-        "singleQuote": true, 
+        "singleQuote": true,
         "parser": "typescript"
       }
     ]

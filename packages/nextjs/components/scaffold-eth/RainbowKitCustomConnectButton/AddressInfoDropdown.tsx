@@ -54,7 +54,7 @@ export const AddressInfoDropdown = ({
         >
           <BlockieAvatar address={checkSumAddress} size={30} ensImage={ensAvatar} />
           <span className="ml-2 mr-1">
-            {isENS(displayName) ? displayName : checkSumAddress?.slice(0, 6) + "..." + checkSumAddress?.slice(-4)}
+            {isENS(displayName) ? displayName : checkSumAddress?.slice(0, 4) + "..." + checkSumAddress?.slice(-2)}
           </span>
           <ChevronDownIcon className="h-6 w-4 ml-2 sm:ml-0" />
         </summary>

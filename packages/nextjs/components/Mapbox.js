@@ -7,11 +7,11 @@ mapboxgl.accessToken = "pk.eyJ1Ijoicm9uY2h1Y2siLCJhIjoiY2x2Y2o5Z2drMGY3cjJrcGI4b
 
 export default function Mapbox({
   setIsControlsActive = bool => bool, // Activates "Record" button on map click
-  height = "70vh",                    // Default height of map container
-  setLatLng = arr => arr,             // Set state variable for lat,lon from map tap
-  lngLat = [],                        // lat,lon state variable, set from map tap
-  isCheckInActive = false,            // set to true after clicking "Record" button. Resizes map
-  latLngAttestation = [],             // State variable for lat,lon loaded from attestation
+  height = "70vh", // Default height of map container
+  setLatLng = arr => arr, // Set state variable for lat,lon from map tap
+  lngLat = [], // lat,lon state variable, set from map tap
+  isCheckInActive = false, // set to true after clicking "Record" button. Resizes map
+  latLngAttestation = [], // State variable for lat,lon loaded from attestation
   setIsLoading = bool => bool,
 }) {
   const mapContainer = useRef(null);
@@ -49,8 +49,7 @@ export default function Mapbox({
       markersRef.current = [];
 
       // Set state variables
-      console.log("📍[Mapbox] Attestation coordinates:", latLngAttestation[0], latLngAttestation[1])
-
+      console.log("📍[Mapbox] Attestation coordinates:", latLngAttestation[0], latLngAttestation[1]);
 
       // Add a pin to the map
       const el = document.createElement("div");
