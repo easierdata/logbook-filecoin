@@ -62,6 +62,7 @@ export default function Mapbox({
       // Animated flyTo to position marker at center of map
       map.current.flyTo({
         center: [latLngAttestation[0], latLngAttestation[1]],
+        zoom: 11.5,
         essential: true,
       });
 
@@ -76,6 +77,8 @@ export default function Mapbox({
     // });
 
     map.current?.on("click", e => {
+
+      if (latLngAttestation.length > 0) { return; }
       // Clear existing markers
       markersRef.current.forEach(marker => marker.remove());
       markersRef.current = [];
