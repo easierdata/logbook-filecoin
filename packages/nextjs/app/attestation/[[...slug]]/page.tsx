@@ -1,43 +1,43 @@
-"use client";
+'use client';
 
-import React, { useContext, useEffect, useState } from "react";
-import { Suspense } from "react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
-import { SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
-import type { NextPage } from "next";
-import { ErrorBoundary, FallbackProps } from "react-error-boundary";
-import { ArrowUpRightIcon, ClockIcon, DocumentTextIcon, MapPinIcon } from "@heroicons/react/24/outline";
-import easConfig from "~~/EAS.config";
-import { EASContext } from "~~/components/EasContextProvider";
-import Mapbox from "~~/components/Mapbox";
-import Spinner from "~~/components/Spinner";
-import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
-import { LocationAttestation } from "~~/types/attestations";
-import hexToDate from "~~/utils/hexToDate";
-import parseLocation from "~~/utils/parseLocation";
+import React, { useContext, useEffect, useState } from 'react';
+import { Suspense } from 'react';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
+import { SchemaEncoder } from '@ethereum-attestation-service/eas-sdk';
+import type { NextPage } from 'next';
+import { ErrorBoundary, FallbackProps } from 'react-error-boundary';
+import { ArrowUpRightIcon, ClockIcon, DocumentTextIcon, MapPinIcon } from '@heroicons/react/24/outline';
+import easConfig from '~~/EAS.config';
+import { EASContext } from '~~/components/EasContextProvider';
+import Mapbox from '~~/components/Mapbox';
+import Spinner from '~~/components/Spinner';
+import { useTargetNetwork } from '~~/hooks/scaffold-eth/useTargetNetwork';
+import { LocationAttestation } from '~~/types/attestations';
+import hexToDate from '~~/utils/hexToDate';
+import parseLocation from '~~/utils/parseLocation';
 
 // import Link from "next/link";
 const GATEWAY_URL = process.env.NEXT_PUBLIC_GATEWAY_URL
   ? process.env.NEXT_PUBLIC_GATEWAY_URL
-  : "https://gateway.pinata.cloud";
+  : 'https://gateway.pinata.cloud';
 
 const CheckinFrom: NextPage = () => {
   const params = useParams();
   const { eas } = useContext(EASContext); // does this need error handling in case EAS is null or not ready?
 
-  const [attestationUid, setAttestationUid] = useState("");
+  const [attestationUid, setAttestationUid] = useState('');
   const [attestationData, setAttestationData] = useState<LocationAttestation | null>(null);
   const { targetNetwork } = useTargetNetwork();
 
   useEffect(() => {
-    if (!(params.slug?.length > 0) && params.slug[0] != "uid") return;
+    if (!(params.slug?.length > 0) && params.slug[0] != 'uid') return;
     setAttestationUid(params.slug[1]);
   }, [params.slug]);
 
   useEffect(() => {
     if (!eas) {
-      console.error("EAS is not initialized");
+      console.error('EAS is not initialized');
       return;
     }
 
@@ -78,27 +78,27 @@ const CheckinFrom: NextPage = () => {
           extractedData.attestationId = attestationId;
           setAttestationData(extractedData as LocationAttestation);
         } catch (err) {
-          console.error("Error decoded attestation data ...", err);
+          console.error('Error decoded attestation data ...', err);
         }
       })
       .catch(err => {
-        console.error("A: Error fetching attestation data", err);
+        console.error('A: Error fetching attestation data', err);
       });
   }, [eas, attestationUid]);
 
-  console.log("attestationData", attestationData);
+  console.log('attestationData', attestationData);
 
   //logic for error handling within the ErrorBoubdary fallbackRender
   const fallBackLogic = ({ error }: FallbackProps): React.ReactNode => {
-    if (error.message.includes("403")) {
-      console.log("[🧪 DEBUG](error): Access denied -", error);
+    if (error.message.includes('403')) {
+      console.log('[🧪 DEBUG](error): Access denied -', error);
       return (
         <div className="text-red-500 text-2xl font-black flex justify-center items-center">
           Access denied. Please check your permissions.
         </div>
       );
     } else {
-      console.error("[🧪 DEBUG](error):", error);
+      console.error('[🧪 DEBUG](error):', error);
       return (
         <div className="text-red-500 text-2xl font-black flex justify-center items-center">
           Error loading attestation data. Please try again later
@@ -112,8 +112,8 @@ const CheckinFrom: NextPage = () => {
   const hasValidMedia =
     Array.isArray(mediaDataFetched) &&
     mediaDataFetched.length > 0 &&
-    typeof mediaDataFetched[0] === "string" &&
-    mediaDataFetched[0].trim() !== "";
+    typeof mediaDataFetched[0] === 'string' &&
+    mediaDataFetched[0].trim() !== '';
 
   return (
     // TODO: handle error/ no attestation.
@@ -152,22 +152,22 @@ const CheckinFrom: NextPage = () => {
                       <td className="">
                         <MapPinIcon
                           className="h-5 w-5 text-primary flex-shrink-0 flex-grow-0"
-                          style={{ flexBasis: "auto" }}
+                          style={{ flexBasis: 'auto' }}
                         />
                       </td>
                       <td className="flex flex-col sm:flex-row">
                         <div className="sm:mr-4">
-                          {" "}
+                          {' '}
                           {/* Adjust margin for larger screens */}
                           <strong className="text-sm">Lon: &nbsp;&nbsp;&nbsp; </strong>
                           {(attestationData && parseLocation(attestationData?.location.value.value as string)[0]) ||
-                            "fetching"}
+                            'fetching'}
                         </div>
 
                         <div>
                           <strong className="text-sm">Lat: &nbsp;&nbsp;&nbsp;</strong>
                           {(attestationData && parseLocation(attestationData?.location.value.value as string)[1]) ||
-                            "fetching"}
+                            'fetching'}
                         </div>
                       </td>
                     </tr>
@@ -178,20 +178,24 @@ const CheckinFrom: NextPage = () => {
                       <td className="">
                         {(attestationData &&
                           hexToDate((attestationData?.eventTimestamp.value.value as unknown as bigint).toString(16))) ||
-                          "fetching"}
+                          'fetching'}
                       </td>
                     </tr>
                     <tr className="border-gray-200">
                       <td className="">
                         <DocumentTextIcon className="h-5 w-5 text-primary" />
                       </td>
-                      <td>{(attestationData && (attestationData?.memo.value.value as string)) || "fetching"}</td>
+                      <td>{(attestationData && (attestationData?.memo.value.value as string)) || 'fetching'}</td>
                     </tr>
                     <tr className="border-gray-200">
                       <td className="text-sm ">
                         <strong>From:</strong>
                       </td>
-                      <td>{(attestationData && attestationData?.attester) || "fetching"}</td>
+                      <td className="break-words max-w-xs">
+                        {attestationData && attestationData?.attester
+                          ? `${attestationData?.attester?.slice(0, 25)}...`
+                          : 'fetching'}
+                      </td>
                     </tr>
                     {hasValidMedia && (
                       <tr className="border-gray-200">
@@ -224,7 +228,7 @@ const CheckinFrom: NextPage = () => {
                       <td className="sm:w-1/2 p-2">
                         <Link
                           target="_blank"
-                          href={`https://${targetNetwork.name}.easscan.org/attestation/view/${attestationUid}` || ""}
+                          href={`https://${targetNetwork.name}.easscan.org/attestation/view/${attestationUid}` || ''}
                         >
                           <div className="btn btn-outline btn-primary w-full">
                             View on EASScan
