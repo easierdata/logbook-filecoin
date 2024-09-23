@@ -21,6 +21,7 @@
         "singleQuote": false,
         "parser": "typescript"
       }
-    ]
+    ],
+    "quotes": ["error", "single", { "avoidEscape": true, "allowTemplateLiterals": true }]
   }
 }
