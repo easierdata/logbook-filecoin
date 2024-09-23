@@ -29,6 +29,7 @@ const CheckinFrom: NextPage = () => {
   const [attestationUid, setAttestationUid] = useState('');
   const [attestationData, setAttestationData] = useState<LocationAttestation | null>(null);
   const { targetNetwork } = useTargetNetwork();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (!(params.slug?.length > 0) && params.slug[0] != 'uid') return;
@@ -41,7 +42,8 @@ const CheckinFrom: NextPage = () => {
       return;
     }
 
-    eas // this should be async?
+    setIsLoading(true);
+    eas
       .getAttestation(attestationUid)
       .then(res => {
         const [
@@ -83,6 +85,9 @@ const CheckinFrom: NextPage = () => {
       })
       .catch(err => {
         console.error('A: Error fetching attestation data', err);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   }, [eas, attestationUid]);
 
@@ -185,7 +190,9 @@ const CheckinFrom: NextPage = () => {
                       <td className="">
                         <DocumentTextIcon className="h-5 w-5 text-primary" />
                       </td>
-                      <td>{(attestationData && (attestationData?.memo.value.value as string)) || 'fetching'}</td>
+                      <td>
+                        {isLoading ? 'fetching' : (attestationData?.memo.value.value as string) || 'no memo added'}
+                      </td>
                     </tr>
                     <tr className="border-gray-200">
                       <td className="text-sm ">
