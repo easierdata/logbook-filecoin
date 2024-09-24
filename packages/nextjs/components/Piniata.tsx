@@ -90,6 +90,7 @@ export default function PinataUpload({
       {uploading && <progress className="progress w-56 progress-primary absolute mt-1 ml-1" />}
       {error && <p className="text-red-500 mt-1">{error}</p>}
       {cid && (
+        // eslint-disable-next-line @next/next/no-img-element
         <img src={`https://${GATEWAY_URL}/ipfs/${cid}`} alt="file upload" className="m-1 border-4 border-primary" />
       )}
     </div>
