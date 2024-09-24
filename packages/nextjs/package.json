@@ -14,7 +14,8 @@
     "vercel:yolo": "vercel --build-env NEXT_PUBLIC_IGNORE_BUILD_ERROR=true",
     "prepare": "husky install",
     "vercel-build": "yarn type-check && yarn lint && yarn build",
-    "type-check": "tsc --noEmit"
+    "type-check": "cross-env NODE_OPTIONS='--max-old-space-size=8192' tsc --noEmit",
+    "type-check:watch": "cross-env NODE_OPTIONS='--max-old-space-size=8192' tsc --noEmit --watch"
   },
   "dependencies": {
     "@heroicons/react": "~2.0.11",

@@ -38,7 +38,7 @@ export default function PinataUpload({
       const resData = await res.json();
       console.log('[🧪 DEBUG](resData):', resData);
       setCid(resData.IpfsHash);
-    } catch (e) {
+    } catch (e: any) {
       console.error('Error uploading file:', e);
       setError(e.message || 'Trouble uploading file');
     } finally {
