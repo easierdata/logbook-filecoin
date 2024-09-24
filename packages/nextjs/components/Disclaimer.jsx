@@ -6,7 +6,7 @@ const Disclaimer = ({ setIsDisclaimer = bool => bool }) => {
       <div className="hero min-h-screen absolute z-10">
         <div className="hero-content text-center">
           <div className="max-w-md">
-            <div className="card w-96 bg-base-100 shadow-xl bg-red-500">
+            <div className="card w-96 shadow-xl bg-red-500">
               <div className="card-body">
                 <div className="flex flex-col">
                   <h2 className="card-title">This is alpha software!</h2>

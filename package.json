@@ -33,7 +33,8 @@
     "postinstall": "husky install",
     "precommit": "lint-staged",
     "vercel": "yarn workspace @se-2/nextjs vercel",
-    "vercel:yolo": "yarn workspace @se-2/nextjs vercel:yolo"
+    "vercel:yolo": "yarn workspace @se-2/nextjs vercel:yolo",
+    "prepare": "husky install"
   },
   "packageManager": "yarn@3.2.3",
   "devDependencies": {
@@ -44,7 +45,7 @@
     "@types/react-dom": "latest",
     "commitlint": "^19.3.0",
     "cross-env": "^7.0.3",
-    "husky": "^9.1.6",
+    "husky": "^8.0.0",
     "lint-staged": "latest"
   },
   "dependencies": {
