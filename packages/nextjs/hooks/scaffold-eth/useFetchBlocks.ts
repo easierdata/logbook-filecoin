@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from 'react';
 import {
   Block,
   Hash,
@@ -8,16 +8,16 @@ import {
   publicActions,
   walletActions,
   webSocket,
-} from "viem";
-import { hardhat } from "viem/chains";
-import { decodeTransactionData } from "~~/utils/scaffold-eth";
+} from 'viem';
+import { hardhat } from 'viem/chains';
+import { decodeTransactionData } from '~~/utils/scaffold-eth';
 
 const BLOCKS_PER_PAGE = 20;
 
 export const testClient = createTestClient({
   chain: hardhat,
-  mode: "hardhat",
-  transport: webSocket("ws://127.0.0.1:8545"),
+  mode: 'hardhat',
+  transport: webSocket('ws://127.0.0.1:8545'),
 })
   .extend(publicActions)
   .extend(walletActions);
@@ -48,7 +48,7 @@ export const useFetchBlocks = () => {
         try {
           return testClient.getBlock({ blockNumber, includeTransactions: true });
         } catch (err) {
-          setError(err instanceof Error ? err : new Error("An error occurred."));
+          setError(err instanceof Error ? err : new Error('An error occurred.'));
           throw err;
         }
       });
@@ -65,7 +65,7 @@ export const useFetchBlocks = () => {
               const receipt = await testClient.getTransactionReceipt({ hash: (tx as Transaction).hash });
               return { [(tx as Transaction).hash]: receipt };
             } catch (err) {
-              setError(err instanceof Error ? err : new Error("An error occurred."));
+              setError(err instanceof Error ? err : new Error('An error occurred.'));
               throw err;
             }
           }),
@@ -75,7 +75,7 @@ export const useFetchBlocks = () => {
       setBlocks(fetchedBlocks);
       setTransactionReceipts(prevReceipts => ({ ...prevReceipts, ...Object.assign({}, ...txReceipts) }));
     } catch (err) {
-      setError(err instanceof Error ? err : new Error("An error occurred."));
+      setError(err instanceof Error ? err : new Error('An error occurred.'));
     }
   }, [currentPage]);
 
@@ -102,7 +102,7 @@ export const useFetchBlocks = () => {
                 const receipt = await testClient.getTransactionReceipt({ hash: (tx as Transaction).hash });
                 return { [(tx as Transaction).hash]: receipt };
               } catch (err) {
-                setError(err instanceof Error ? err : new Error("An error occurred fetching receipt."));
+                setError(err instanceof Error ? err : new Error('An error occurred fetching receipt.'));
                 throw err;
               }
             }),
@@ -115,7 +115,7 @@ export const useFetchBlocks = () => {
           setTotalBlocks(newBlock.number);
         }
       } catch (err) {
-        setError(err instanceof Error ? err : new Error("An error occurred."));
+        setError(err instanceof Error ? err : new Error('An error occurred.'));
       }
     };
 

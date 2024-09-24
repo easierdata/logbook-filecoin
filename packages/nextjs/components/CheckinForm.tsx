@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import React, { Dispatch, SyntheticEvent, useContext, useState } from "react";
-import { useRouter } from "next/navigation";
-import "../styles/custom-datepicker.css";
-import PintataUpload from "./Piniata";
-import { SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
-import { ethers } from "ethers";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import { Config, UseChainIdParameters, useAccount, useChainId } from "wagmi";
-import { ClockIcon, DocumentTextIcon, MapPinIcon } from "@heroicons/react/24/outline";
-import easConfig from "~~/EAS.config";
-import { IFormValues } from "~~/app/interface/interface";
-import { EASContext } from "~~/components/EasContextProvider";
-import { wagmiConfig } from "~~/services/web3/wagmiConfig";
+import React, { Dispatch, SyntheticEvent, useContext, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import '../styles/custom-datepicker.css';
+import PintataUpload from './Piniata';
+import { SchemaEncoder } from '@ethereum-attestation-service/eas-sdk';
+import { ethers } from 'ethers';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { Config, UseChainIdParameters, useAccount, useChainId } from 'wagmi';
+import { ClockIcon, DocumentTextIcon, MapPinIcon } from '@heroicons/react/24/outline';
+import easConfig from '~~/EAS.config';
+import { IFormValues } from '~~/app/interface/interface';
+import { EASContext } from '~~/components/EasContextProvider';
+import { wagmiConfig } from '~~/services/web3/wagmiConfig';
 
 const CheckinForm = ({ lngLat, setIsTxLoading }: { lngLat: number[]; setIsTxLoading: Dispatch<boolean> }) => {
   // NextJS redirect
@@ -24,9 +24,9 @@ const CheckinForm = ({ lngLat, setIsTxLoading }: { lngLat: number[]; setIsTxLoad
     latitude: lngLat[1].toString(), // to be picked up by prop
 
     eventTimestamp: Math.floor(Number(now) / 1000),
-    data: "",
-    mediaType: [""],
-    mediaData: [""],
+    data: '',
+    mediaType: [''],
+    mediaData: [''],
   });
 
   const { isConnected } = useAccount();
@@ -63,7 +63,7 @@ const CheckinForm = ({ lngLat, setIsTxLoading }: { lngLat: number[]; setIsTxLoad
   const handleClick = (event: React.MouseEvent<HTMLInputElement>) => {
     if (!isConnected) {
       event.preventDefault(); // Prevent form submission or any action
-      alert("Please connect to record log entry.");
+      alert('Please connect to record log entry.');
     } else {
       handleSubmit(event);
     }
@@ -76,59 +76,59 @@ const CheckinForm = ({ lngLat, setIsTxLoading }: { lngLat: number[]; setIsTxLoad
     setError(null);
 
     if (!isReady) {
-      setError("EAS is not ready");
+      setError('EAS is not ready');
       setIsTxLoading(false);
       return;
     }
 
     if (!schemaUID) {
-      throw new Error("Schema UID is null, cannot proceed with attestation");
+      throw new Error('Schema UID is null, cannot proceed with attestation');
     }
 
     try {
       const encodedData = schemaEncoder.encodeData([
         {
-          name: "eventTimestamp",
+          name: 'eventTimestamp',
           value: formValues.eventTimestamp, // here we convert to nowInSeconds
-          type: "uint256",
+          type: 'uint256',
         },
         {
-          name: "srs",
-          value: "EPSG:4326", // hard coded for v0.1
-          type: "string",
+          name: 'srs',
+          value: 'EPSG:4326', // hard coded for v0.1
+          type: 'string',
         },
         {
-          name: "locationType",
-          value: "DecimalDegrees<string>", // hard coded for v0.1
-          type: "string",
+          name: 'locationType',
+          value: 'DecimalDegrees<string>', // hard coded for v0.1
+          type: 'string',
         },
         {
-          name: "location",
+          name: 'location',
           // value: `${formValues.longitude.toString()}, ${formValues.latitude.toString()}`,
           value: `${formValues.longitude.toString()}, ${formValues.latitude.toString()}`.toString(),
-          type: "string",
+          type: 'string',
         },
         {
-          name: "recipeType",
-          value: ["NEED A STRING ARRAY HERE"],
-          type: "string[]",
+          name: 'recipeType',
+          value: ['NEED A STRING ARRAY HERE'],
+          type: 'string[]',
         },
         {
-          name: "recipePayload",
-          value: [ethers.toUtf8Bytes("NEED A BYTES ARRAY HERE")],
-          type: "bytes[]",
+          name: 'recipePayload',
+          value: [ethers.toUtf8Bytes('NEED A BYTES ARRAY HERE')],
+          type: 'bytes[]',
         },
         {
-          name: "mediaType",
+          name: 'mediaType',
           value: formValues.mediaType, // storageSystem:MIMEtype
-          type: "string[]",
+          type: 'string[]',
         },
         {
-          name: "mediaData",
+          name: 'mediaData',
           value: formValues.mediaData, // CID, encoded as bytes somehow
-          type: "string[]",
+          type: 'string[]',
         },
-        { name: "memo", value: formValues.data, type: "string" },
+        { name: 'memo', value: formValues.data, type: 'string' },
       ]);
 
       const tx = await eas?.attest({
@@ -145,9 +145,9 @@ const CheckinForm = ({ lngLat, setIsTxLoading }: { lngLat: number[]; setIsTxLoad
       push(`/attestation/uid/${newAttestationUID}`);
     } catch (err) {
       if (err instanceof Error) {
-        setError((err.message as string) || "An error occurred while creating the attestation");
+        setError((err.message as string) || 'An error occurred while creating the attestation');
       } else {
-        setError("An error occurred while creating the attestationm");
+        setError('An error occurred while creating the attestationm');
       }
     } finally {
       setIsTxLoading(false);
@@ -159,7 +159,7 @@ const CheckinForm = ({ lngLat, setIsTxLoading }: { lngLat: number[]; setIsTxLoad
       <div className="flex-grow center w-full">
         <form onSubmit={handleSubmit} className="card m-5 flex flex-col gap-4">
           <label className="flex flex-row items-center gap-2">
-            <MapPinIcon className="h-5 w-5 text-primary flex-shrink-0 flex-grow-0" style={{ flexBasis: "auto" }} />
+            <MapPinIcon className="h-5 w-5 text-primary flex-shrink-0 flex-grow-0" style={{ flexBasis: 'auto' }} />
             <input
               type="number"
               name="longitude"
@@ -202,11 +202,11 @@ const CheckinForm = ({ lngLat, setIsTxLoading }: { lngLat: number[]; setIsTxLoad
           {error && <p className="text-red-500">{error}</p>}
           <input
             type="submit"
-            value={isConnected ? "Record Log Entry" : "Connect to record"}
+            value={isConnected ? 'Record Log Entry' : 'Connect to record'}
             className={`input btn ${
               isConnected
-                ? "bg-primary text-white hover:scale-105 hover:bg-dark-primary cursor-pointer"
-                : "bg-gray-400 text-white cursor-not-allowed"
+                ? 'bg-primary text-white hover:scale-105 hover:bg-dark-primary cursor-pointer'
+                : 'bg-gray-400 text-white cursor-not-allowed'
             }`}
             onClick={handleClick} // Control action with onClick
           />

@@ -1,7 +1,7 @@
-import { useMemo } from "react";
-import { BrowserProvider, JsonRpcSigner } from "ethers";
-import type { Account, Chain, Client, Transport } from "viem";
-import { type Config, useConnectorClient } from "wagmi";
+import { useMemo } from 'react';
+import { BrowserProvider, JsonRpcSigner } from 'ethers';
+import type { Account, Chain, Client, Transport } from 'viem';
+import { type Config, useConnectorClient } from 'wagmi';
 
 export function clientToSigner(client: Client<Transport, Chain, Account>) {
   const { account, chain, transport } = client;

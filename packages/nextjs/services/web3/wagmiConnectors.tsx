@@ -1,5 +1,5 @@
-import { burnerWalletConfig } from "./wagmi-burner/burnerWalletConfig";
-import { connectorsForWallets } from "@rainbow-me/rainbowkit";
+import { burnerWalletConfig } from './wagmi-burner/burnerWalletConfig';
+import { connectorsForWallets } from '@rainbow-me/rainbowkit';
 import {
   coinbaseWallet,
   ledgerWallet,
@@ -7,9 +7,9 @@ import {
   rainbowWallet,
   safeWallet,
   walletConnectWallet,
-} from "@rainbow-me/rainbowkit/wallets";
-import * as chains from "viem/chains";
-import scaffoldConfig from "~~/scaffold.config";
+} from '@rainbow-me/rainbowkit/wallets';
+import * as chains from 'viem/chains';
+import scaffoldConfig from '~~/scaffold.config';
 
 const { onlyLocalBurnerWallet, targetNetworks } = scaffoldConfig;
 
@@ -31,13 +31,13 @@ const wallets = [
 export const wagmiConnectors = connectorsForWallets(
   [
     {
-      groupName: "Supported Wallets",
+      groupName: 'Supported Wallets',
       wallets,
     },
   ],
 
   {
-    appName: "scaffold-eth-2",
+    appName: 'scaffold-eth-2',
     projectId: scaffoldConfig.walletConnectProjectId,
   },
 );

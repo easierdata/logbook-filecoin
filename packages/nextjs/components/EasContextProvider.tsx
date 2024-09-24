@@ -1,11 +1,11 @@
 // import { EAS, Offchain, SchemaEncoder, SchemaRegistry } from "@ethereum-attestation-service/eas-sdk";
-import React, { createContext, useEffect, useState } from "react";
-import { EAS } from "@ethereum-attestation-service/eas-sdk";
-import { Config, UseChainIdParameters, useChainId } from "wagmi";
-import easConfig from "~~/EAS.config";
-import { wagmiConfig } from "~~/services/web3/wagmiConfig";
+import React, { createContext, useEffect, useState } from 'react';
+import { EAS } from '@ethereum-attestation-service/eas-sdk';
+import { Config, UseChainIdParameters, useChainId } from 'wagmi';
+import easConfig from '~~/EAS.config';
+import { wagmiConfig } from '~~/services/web3/wagmiConfig';
 // import { foundry } from "viem/chains";
-import { useEthersSigner } from "~~/utils/useEthersSigner";
+import { useEthersSigner } from '~~/utils/useEthersSigner';
 
 const EASContext = createContext({ eas: null as EAS | null, isReady: false });
 
@@ -36,7 +36,7 @@ const EASProvider = ({ children }: { children: React.ReactNode }) => {
         signer && newEAS.connect(signer);
         setSignerReady(true);
       })
-      .catch(err => console.log("[🧪 DEBUG — EAS.connect(signer)](err):", err));
+      .catch(err => console.log('[🧪 DEBUG — EAS.connect(signer)](err):', err));
   }, [chainId, signer]);
 
   return <EASContext.Provider value={{ eas, isReady: signerReady }}>{children}</EASContext.Provider>;

@@ -1,5 +1,5 @@
-import { WalletDetailsParams } from "@rainbow-me/rainbowkit";
-import { createConnector, normalizeChainId } from "@wagmi/core";
+import { WalletDetailsParams } from '@rainbow-me/rainbowkit';
+import { createConnector, normalizeChainId } from '@wagmi/core';
 import {
   EIP1193RequestFn,
   Hex,
@@ -12,31 +12,31 @@ import {
   fromHex,
   getAddress,
   http,
-} from "viem";
-import { privateKeyToAccount } from "viem/accounts";
-import { getHttpRpcClient, hexToBigInt, numberToHex } from "viem/utils";
-import { SendTransactionParameters } from "viem/zksync";
-import { BaseError } from "wagmi";
-import { loadBurnerSK } from "~~/hooks/scaffold-eth";
+} from 'viem';
+import { privateKeyToAccount } from 'viem/accounts';
+import { getHttpRpcClient, hexToBigInt, numberToHex } from 'viem/utils';
+import { SendTransactionParameters } from 'viem/zksync';
+import { BaseError } from 'wagmi';
+import { loadBurnerSK } from '~~/hooks/scaffold-eth';
 
-export const burnerWalletId = "burnerWallet";
-export const burnerWalletName = "Burner Wallet";
+export const burnerWalletId = 'burnerWallet';
+export const burnerWalletName = 'Burner Wallet';
 
 export class ConnectorNotConnectedError extends BaseError {
-  override name = "ConnectorNotConnectedError";
+  override name = 'ConnectorNotConnectedError';
   constructor() {
-    super("Connector not connected.");
+    super('Connector not connected.');
   }
 }
 
 export class ChainNotConfiguredError extends BaseError {
-  override name = "ChainNotConfiguredError";
+  override name = 'ChainNotConfiguredError';
   constructor() {
-    super("Chain not configured.");
+    super('Chain not configured.');
   }
 }
 
-type Provider = ReturnType<Transport<"custom", Record<any, any>, EIP1193RequestFn<WalletRpcSchema>>>;
+type Provider = ReturnType<Transport<'custom', Record<any, any>, EIP1193RequestFn<WalletRpcSchema>>>;
 
 export const createBurnerConnector = (walletDetails: WalletDetailsParams) => {
   let connected = true;
@@ -44,11 +44,11 @@ export const createBurnerConnector = (walletDetails: WalletDetailsParams) => {
   return createConnector<Provider>(config => ({
     id: burnerWalletId,
     name: burnerWalletName,
-    type: "burnerWallet",
+    type: 'burnerWallet',
     async connect({ chainId } = {}) {
       const provider = await this.getProvider();
       const accounts = await provider.request({
-        method: "eth_accounts",
+        method: 'eth_accounts',
       });
       let currentChainId = await this.getChainId();
       if (chainId && currentChainId !== chainId && this.switchChain) {
@@ -70,7 +70,7 @@ export const createBurnerConnector = (walletDetails: WalletDetailsParams) => {
       });
 
       const request: EIP1193RequestFn = async ({ method, params }) => {
-        if (method === "eth_sendTransaction") {
+        if (method === 'eth_sendTransaction') {
           const actualParams = (params as SendTransactionParameters[])[0];
           const value = actualParams.value ? hexToBigInt(actualParams.value as unknown as Hex) : undefined;
           const hash = await client.sendTransaction({
@@ -80,13 +80,13 @@ export const createBurnerConnector = (walletDetails: WalletDetailsParams) => {
           return hash;
         }
 
-        if (method === "eth_accounts") {
+        if (method === 'eth_accounts') {
           return [burnerAccount.address];
         }
 
-        if (method === "wallet_switchEthereumChain") {
+        if (method === 'wallet_switchEthereumChain') {
           type Params = [{ chainId: Hex }];
-          connectedChainId = fromHex((params as Params)[0].chainId, "number");
+          connectedChainId = fromHex((params as Params)[0].chainId, 'number');
           this.onChainChanged(connectedChainId.toString());
           return;
         }
@@ -103,22 +103,22 @@ export const createBurnerConnector = (walletDetails: WalletDetailsParams) => {
     },
     onChainChanged(chain) {
       const chainId = normalizeChainId(chain);
-      config.emitter.emit("change", { chainId });
+      config.emitter.emit('change', { chainId });
     },
     async getAccounts() {
       if (!connected) throw new ConnectorNotConnectedError();
       const provider = await this.getProvider();
-      const accounts = await provider.request({ method: "eth_accounts" });
+      const accounts = await provider.request({ method: 'eth_accounts' });
       return [accounts.map(x => getAddress(x))[0]];
     },
     async onDisconnect() {
-      config.emitter.emit("disconnect");
+      config.emitter.emit('disconnect');
       connected = false;
     },
     async getChainId() {
       const provider = await this.getProvider();
-      const hexChainId = await provider.request({ method: "eth_chainId" });
-      return fromHex(hexChainId, "number");
+      const hexChainId = await provider.request({ method: 'eth_chainId' });
+      return fromHex(hexChainId, 'number');
     },
     async isAuthorized() {
       if (!connected) return false;
@@ -128,7 +128,7 @@ export const createBurnerConnector = (walletDetails: WalletDetailsParams) => {
     onAccountsChanged(accounts) {
       if (accounts.length === 0) this.onDisconnect();
       else
-        config.emitter.emit("change", {
+        config.emitter.emit('change', {
           accounts: accounts.map(x => getAddress(x)),
         });
     },
@@ -138,13 +138,13 @@ export const createBurnerConnector = (walletDetails: WalletDetailsParams) => {
       if (!chain) throw new SwitchChainError(new ChainNotConfiguredError());
 
       await provider.request({
-        method: "wallet_switchEthereumChain",
+        method: 'wallet_switchEthereumChain',
         params: [{ chainId: numberToHex(chainId) }],
       });
       return chain;
     },
     disconnect() {
-      console.log("disconnect from burnerwallet");
+      console.log('disconnect from burnerwallet');
       connected = false;
       return Promise.resolve();
     },

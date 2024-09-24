@@ -1,18 +1,18 @@
-import { useState } from "react";
-import { useTargetNetwork } from "./useTargetNetwork";
-import { MutateOptions } from "@tanstack/react-query";
-import { Abi, ExtractAbiFunctionNames } from "abitype";
-import { Config, UseWriteContractParameters, useAccount, useWriteContract } from "wagmi";
-import { WriteContractErrorType, WriteContractReturnType } from "wagmi/actions";
-import { WriteContractVariables } from "wagmi/query";
-import { useDeployedContractInfo, useTransactor } from "~~/hooks/scaffold-eth";
-import { notification } from "~~/utils/scaffold-eth";
+import { useState } from 'react';
+import { useTargetNetwork } from './useTargetNetwork';
+import { MutateOptions } from '@tanstack/react-query';
+import { Abi, ExtractAbiFunctionNames } from 'abitype';
+import { Config, UseWriteContractParameters, useAccount, useWriteContract } from 'wagmi';
+import { WriteContractErrorType, WriteContractReturnType } from 'wagmi/actions';
+import { WriteContractVariables } from 'wagmi/query';
+import { useDeployedContractInfo, useTransactor } from '~~/hooks/scaffold-eth';
+import { notification } from '~~/utils/scaffold-eth';
 import {
   ContractAbi,
   ContractName,
   scaffoldWriteContractOptions,
   scaffoldWriteContractVariables,
-} from "~~/utils/scaffold-eth/contract";
+} from '~~/utils/scaffold-eth/contract';
 
 /**
  * Wrapper around wagmi's useWriteContract hook which automatically loads (by name) the contract ABI and address from
@@ -34,22 +34,22 @@ export const useScaffoldWriteContract = <TContractName extends ContractName>(
   const { data: deployedContractData } = useDeployedContractInfo(contractName);
 
   const sendContractWriteAsyncTx = async <
-    TFunctionName extends ExtractAbiFunctionNames<ContractAbi<TContractName>, "nonpayable" | "payable">,
+    TFunctionName extends ExtractAbiFunctionNames<ContractAbi<TContractName>, 'nonpayable' | 'payable'>,
   >(
     variables: scaffoldWriteContractVariables<TContractName, TFunctionName>,
     options?: scaffoldWriteContractOptions,
   ) => {
     if (!deployedContractData) {
-      notification.error("Target Contract is not deployed, did you forget to run `yarn deploy`?");
+      notification.error('Target Contract is not deployed, did you forget to run `yarn deploy`?');
       return;
     }
 
     if (!chain?.id) {
-      notification.error("Please connect your wallet");
+      notification.error('Please connect your wallet');
       return;
     }
     if (chain?.id !== targetNetwork.id) {
-      notification.error("You are on the wrong network");
+      notification.error('You are on the wrong network');
       return;
     }
 
@@ -84,21 +84,21 @@ export const useScaffoldWriteContract = <TContractName extends ContractName>(
 
   const sendContractWriteTx = <
     TContractName extends ContractName,
-    TFunctionName extends ExtractAbiFunctionNames<ContractAbi<TContractName>, "nonpayable" | "payable">,
+    TFunctionName extends ExtractAbiFunctionNames<ContractAbi<TContractName>, 'nonpayable' | 'payable'>,
   >(
     variables: scaffoldWriteContractVariables<TContractName, TFunctionName>,
-    options?: Omit<scaffoldWriteContractOptions, "onBlockConfirmation" | "blockConfirmations">,
+    options?: Omit<scaffoldWriteContractOptions, 'onBlockConfirmation' | 'blockConfirmations'>,
   ) => {
     if (!deployedContractData) {
-      notification.error("Target Contract is not deployed, did you forget to run `yarn deploy`?");
+      notification.error('Target Contract is not deployed, did you forget to run `yarn deploy`?');
       return;
     }
     if (!chain?.id) {
-      notification.error("Please connect your wallet");
+      notification.error('Please connect your wallet');
       return;
     }
     if (chain?.id !== targetNetwork.id) {
-      notification.error("You are on the wrong network");
+      notification.error('You are on the wrong network');
       return;
     }
 

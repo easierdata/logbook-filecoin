@@ -1,9 +1,9 @@
-import { useTargetNetwork } from "./useTargetNetwork";
-import { Account, Address, Chain, Client, Transport, getContract } from "viem";
-import { usePublicClient } from "wagmi";
-import { GetWalletClientReturnType } from "wagmi/actions";
-import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
-import { Contract, ContractName } from "~~/utils/scaffold-eth/contract";
+import { useTargetNetwork } from './useTargetNetwork';
+import { Account, Address, Chain, Client, Transport, getContract } from 'viem';
+import { usePublicClient } from 'wagmi';
+import { GetWalletClientReturnType } from 'wagmi/actions';
+import { useDeployedContractInfo } from '~~/hooks/scaffold-eth';
+import { Contract, ContractName } from '~~/utils/scaffold-eth/contract';
 
 /**
  * Gets a viem instance of the contract present in deployedContracts.ts or externalContracts.ts corresponding to
@@ -31,7 +31,7 @@ export const useScaffoldContract = <
     contract = getContract<
       Transport,
       Address,
-      Contract<TContractName>["abi"],
+      Contract<TContractName>['abi'],
       TWalletClient extends Exclude<GetWalletClientReturnType, null>
         ? {
             public: Client<Transport, Chain>;
@@ -42,7 +42,7 @@ export const useScaffoldContract = <
       Account
     >({
       address: deployedContractData.address,
-      abi: deployedContractData.abi as Contract<TContractName>["abi"],
+      abi: deployedContractData.abi as Contract<TContractName>['abi'],
       client: {
         public: publicClient,
         wallet: walletClient ? walletClient : undefined,

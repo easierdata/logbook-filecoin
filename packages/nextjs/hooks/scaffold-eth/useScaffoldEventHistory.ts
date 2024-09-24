@@ -1,19 +1,19 @@
-import { useEffect, useMemo, useState } from "react";
-import { useTargetNetwork } from "./useTargetNetwork";
-import { Abi, AbiEvent, ExtractAbiEventNames } from "abitype";
-import { useInterval } from "usehooks-ts";
-import { Hash } from "viem";
-import * as chains from "viem/chains";
-import { usePublicClient } from "wagmi";
-import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
-import scaffoldConfig from "~~/scaffold.config";
-import { replacer } from "~~/utils/scaffold-eth/common";
+import { useEffect, useMemo, useState } from 'react';
+import { useTargetNetwork } from './useTargetNetwork';
+import { Abi, AbiEvent, ExtractAbiEventNames } from 'abitype';
+import { useInterval } from 'usehooks-ts';
+import { Hash } from 'viem';
+import * as chains from 'viem/chains';
+import { usePublicClient } from 'wagmi';
+import { useDeployedContractInfo } from '~~/hooks/scaffold-eth';
+import scaffoldConfig from '~~/scaffold.config';
+import { replacer } from '~~/utils/scaffold-eth/common';
 import {
   ContractAbi,
   ContractName,
   UseScaffoldEventHistoryConfig,
   UseScaffoldEventHistoryData,
-} from "~~/utils/scaffold-eth/contract";
+} from '~~/utils/scaffold-eth/contract';
 
 /**
  * Reads events from a deployed contract
@@ -60,19 +60,19 @@ export const useScaffoldEventHistory = <
     setIsLoading(true);
     try {
       if (!deployedContractData) {
-        throw new Error("Contract not found");
+        throw new Error('Contract not found');
       }
 
       if (!enabled) {
-        throw new Error("Hook disabled");
+        throw new Error('Hook disabled');
       }
 
       if (!publicClient) {
-        throw new Error("Public client not found");
+        throw new Error('Public client not found');
       }
 
       const event = (deployedContractData.abi as Abi).find(
-        part => part.type === "event" && part.name === eventName,
+        part => part.type === 'event' && part.name === eventName,
       ) as AbiEvent;
 
       const blockNumber = await publicClient.getBlockNumber({ cacheTime: 0 });
@@ -106,7 +106,7 @@ export const useScaffoldEventHistory = <
                 : null,
           });
         }
-        if (events && typeof fromBlock === "undefined") {
+        if (events && typeof fromBlock === 'undefined') {
           setEvents([...newEvents, ...events]);
         } else {
           setEvents(newEvents);

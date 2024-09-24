@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
-import { useTargetNetwork } from "./useTargetNetwork";
-import { Address, Log } from "viem";
-import { usePublicClient } from "wagmi";
+import { useEffect, useState } from 'react';
+import { useTargetNetwork } from './useTargetNetwork';
+import { Address, Log } from 'viem';
+import { usePublicClient } from 'wagmi';
 
 export const useContractLogs = (address: Address) => {
   const [logs, setLogs] = useState<Log[]>([]);
@@ -10,16 +10,16 @@ export const useContractLogs = (address: Address) => {
 
   useEffect(() => {
     const fetchLogs = async () => {
-      if (!client) return console.error("Client not found");
+      if (!client) return console.error('Client not found');
       try {
         const existingLogs = await client.getLogs({
           address: address,
           fromBlock: 0n,
-          toBlock: "latest",
+          toBlock: 'latest',
         });
         setLogs(existingLogs);
       } catch (error) {
-        console.error("Failed to fetch logs:", error);
+        console.error('Failed to fetch logs:', error);
       }
     };
     fetchLogs();
@@ -29,7 +29,7 @@ export const useContractLogs = (address: Address) => {
         const newLogs = await client.getLogs({
           address: address,
           fromBlock: prevBlockNumber,
-          toBlock: "latest",
+          toBlock: 'latest',
         });
         setLogs(prevLogs => [...prevLogs, ...newLogs]);
       },
