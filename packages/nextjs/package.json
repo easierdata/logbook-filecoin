@@ -2,6 +2,12 @@
   "name": "@se-2/nextjs",
   "version": "0.1.0",
   "private": true,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next"
+    }
+  ],
   "scripts": {
     "build": "next build",
     "check-types": "tsc --noEmit --incremental",
