@@ -224,7 +224,9 @@ const CheckinFrom: NextPage = () => {
                       <td className="sm:w-1/2 p-2">
                         <Link
                           target="_blank"
-                          href={`https://${targetNetwork.name}.easscan.org/attestation/view/${attestationUid}` || ""}
+                          href={`https://${
+                            targetNetwork.name.toLowerCase().includes('arbitrum') ? 'arbitrum' : targetNetwork.name
+                          }.easscan.org/attestation/view/${attestationUid}`}
                         >
                           <div className="btn btn-outline btn-primary w-full">
                             View on EASScan
