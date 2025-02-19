@@ -27,6 +27,8 @@ interface Entry {
 interface EntriesMapProps {
   entries: Entry[];
   onMarkerClick: (entry: Entry) => void;
+  onMarkerHover: (entry: Entry, event: MouseEvent) => void;
+  onMarkerLeave: () => void;
 }
 
  // Creates HTML content for marker popups
@@ -46,11 +48,32 @@ const createPopupContent = (entry: Entry) => `
 `;
 
  // Marker creation, popup display, and map interactions
-const EntriesMap: React.FC<EntriesMapProps> = ({ entries, onMarkerClick }) => {
+const EntriesMap: React.FC<EntriesMapProps> = ({ entries, onMarkerClick, onMarkerHover, onMarkerLeave }) => {
   const mapContainer = React.useRef<HTMLDivElement | null>(null);
   const map = React.useRef<mapboxgl.Map | null>(null);
   const markersRef = React.useRef<mapboxgl.Marker[]>([]);
+  const isHoveringRef = React.useRef(false);
+  const initialBoundsSet = React.useRef(false);
   const [isLoaded, setIsLoaded] = React.useState(false);
+
+  // Mouse move handler to clear hover state when not over markers
+  React.useEffect(() => {
+    const container = mapContainer.current;
+    if (!container) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.classList.contains('h-3')) {
+        if (isHoveringRef.current) {
+          isHoveringRef.current = false;
+          onMarkerLeave();
+        }
+      }
+    };
+
+    container.addEventListener('mousemove', handleMouseMove);
+    return () => container.removeEventListener('mousemove', handleMouseMove);
+  }, [onMarkerLeave]);
 
   React.useEffect(() => {
     if (map.current || !mapContainer.current) return;
@@ -91,14 +114,23 @@ const EntriesMap: React.FC<EntriesMapProps> = ({ entries, onMarkerClick }) => {
       try {
         const marker = new mapboxgl.Marker(el)
           .setLngLat([lng, lat])
-          .setPopup(new mapboxgl.Popup({
-            offset: 25,
-            closeButton: false,
-            closeOnClick: true
-          }).setHTML(createPopupContent(entry)))
           .addTo(map.current!);
 
         el.addEventListener('click', () => onMarkerClick(entry));
+        el.addEventListener('mouseenter', (event) => {
+          isHoveringRef.current = true;
+          onMarkerHover(entry, event as MouseEvent);
+        });
+        el.addEventListener('mousemove', (event) => {
+          if (isHoveringRef.current) {
+            onMarkerHover(entry, event as MouseEvent);
+          }
+        });
+        el.addEventListener('mouseleave', () => {
+          isHoveringRef.current = false;
+          onMarkerLeave();
+        });
+        
         bounds.extend([lng, lat]);
         markersRef.current.push(marker);
       } catch (error) {
@@ -106,20 +138,23 @@ const EntriesMap: React.FC<EntriesMapProps> = ({ entries, onMarkerClick }) => {
       }
     });
 
-    // Adjust map view based on markers
-    if (markersRef.current.length > 1) {
-      map.current.fitBounds(bounds, {
-        padding: { top: 50, bottom: 50, left: 50, right: 50 },
-        maxZoom: 15
-      });
-    } else if (markersRef.current.length === 1) {
-      const lngLat = markersRef.current[0].getLngLat();
-      map.current.flyTo({
-        center: [lngLat.lng, lngLat.lat],
-        zoom: 12
-      });
+    // Only adjust map view on initial load or when new entries are added
+    if (!initialBoundsSet.current && markersRef.current.length > 0) {
+      if (markersRef.current.length > 1) {
+        map.current.fitBounds(bounds, {
+          padding: { top: 50, bottom: 50, left: 50, right: 50 },
+          maxZoom: 15
+        });
+      } else {
+        const lngLat = markersRef.current[0].getLngLat();
+        map.current.flyTo({
+          center: [lngLat.lng, lngLat.lat],
+          zoom: 12
+        });
+      }
+      initialBoundsSet.current = true;
     }
-  }, [entries, isLoaded, onMarkerClick]);
+  }, [entries, isLoaded, onMarkerClick, onMarkerHover, onMarkerLeave]);
 
   return (
     <div
