@@ -58,6 +58,10 @@ The following environment variables are required to run this project. For the ne
 NEXT_PUBLIC_MAPBOX_TOKEN=""
 NEXT_PUBLIC_GATEWAY_URL=""
 PINATA_JWT=""
+
+# Generated from "npx ucan-key ed --json" also reference (https://www.npmjs.com/package/@web3-storage/w3cli)
+WEB3STORAGE_KEY=""
+WEB3STORAGE_PROOF="did:key:z6MkhXWJxB3yHVkV15ket44D13uKd24iCsYW4AF64jDrUiHU"
 ```
 
 ---
