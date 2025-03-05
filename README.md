@@ -20,6 +20,8 @@ Watch a quick intro to the Logbook here:
 
 You can find documentation about the Location Proof Protocol [here](https://astral-docs-test.vercel.app/docs/location-proof-protocol/introduction).
 
+**Note** The logbook currently supports celo, arbitrum, and sepolia networks.
+
 ## Deployment Guide
 
 To integrate code to create or read location proofs, see the [Location Proof Protocol documentation](https://docs.astral.global/docs/location-proof-protocol/quickstart).
