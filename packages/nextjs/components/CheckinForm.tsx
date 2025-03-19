@@ -122,7 +122,7 @@ const CheckinForm: React.FC<CheckinFormProps> = ({ lngLat, setIsTxLoading }) => 
         { name: 'recipePayload', value: [ethers.toUtf8Bytes('empty')], type: 'bytes[]' },
         { name: 'mediaType', value: fileType ? [fileType] : ['text/plain'], type: 'string[]' },
         { name: 'mediaData', value: [fileCid || ''], type: 'string[]' },
-        { name: 'memo', value: memoCid || '', type: 'string' }
+        { name: 'memo', value: formValues.data || '', type: 'string' }
       ]);
 
       const tx = await eas.attest({

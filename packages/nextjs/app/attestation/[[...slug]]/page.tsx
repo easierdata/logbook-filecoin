@@ -173,18 +173,17 @@ const AttestationPage: NextPage = () => {
                     </td>
                   </tr>
 
-                  {/* Memo */}
-                  <tr className="border-gray-200">
-                    <td>
-                      <DocumentTextIcon className="h-5 w-5 text-primary" />
-                    </td>
-                    <td>
-                      {attestationData?.memo.value.value 
-                        ? formatIpfsUrl(attestationData.memo.value.value as string)
-                        : "fetching"
-                      }
-                    </td>
-                  </tr>
+                  {/* Memo - only show if not empty */}
+                  {attestationData?.memo.value.value && (
+                    <tr className="border-gray-200">
+                      <td>
+                        <DocumentTextIcon className="h-5 w-5 text-primary" />
+                      </td>
+                      <td>
+                        {attestationData.memo.value.value}
+                      </td>
+                    </tr>
+                  )}
 
                   {/* Attester */}
                   <tr className="border-gray-200">
