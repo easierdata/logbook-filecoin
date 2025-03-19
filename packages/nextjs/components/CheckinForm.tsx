@@ -101,14 +101,6 @@ const CheckinForm: React.FC<CheckinFormProps> = ({ lngLat, setIsTxLoading }) => 
         throw new Error("EAS is not ready");
       }
 
-      // Upload memo if provided
-      let memoCid = "";
-      if (formValues.data) {
-        console.log("Uploading memo...");
-        memoCid = await uploadText(formValues.data);
-        console.log("Completed uploading memo.");
-      }
-
       // Upload file if provided
       console.log("Uploading file...");
       const fileInput = (event.target as HTMLFormElement).querySelector('input[type="file"]') as HTMLInputElement;
@@ -198,22 +190,31 @@ const CheckinForm: React.FC<CheckinFormProps> = ({ lngLat, setIsTxLoading }) => 
         {/* Memo input */}
         <label className="flex flex-row items-center gap-2">
           <DocumentTextIcon className="h-5 w-5 text-primary" />
-          <input
-            type="text"
-            name="data"
-            value={formValues.data}
-            onChange={handleInputChange}
-            placeholder="Memo (optional)"
-            className="input input-bordered w-full bg-base-200 border-indigo-500 text-black"
-          />
+          <div className="w-full">
+            <span className="text-sm text-gray-500 mb-1 block">Memo (optional)</span>
+            <input
+              type="text"
+              name="data"
+              value={formValues.data}
+              onChange={handleInputChange}
+              placeholder="No memo provided."
+              className="input input-bordered w-full bg-base-200 border-indigo-500 text-black"
+            />
+          </div>
         </label>
 
         {/* File upload */}
-        <input
-          type="file"
-          className="file-input file-input-bordered w-full"
-          accept="image/*"
-        />
+        <label className="flex flex-row items-center gap-2">
+          <DocumentTextIcon className="h-5 w-5 text-primary" />
+          <div className="w-full">
+            <span className="text-sm text-gray-500 mb-1 block">Image (optional)</span>
+            <input
+              type="file"
+              className="file-input file-input-bordered w-full"
+              accept="image/*"
+            />
+          </div>
+        </label>
 
         {error && <p className="text-error text-sm">{error}</p>}
 
@@ -237,21 +238,6 @@ const CheckinForm: React.FC<CheckinFormProps> = ({ lngLat, setIsTxLoading }) => 
       </form>
     </div>
   );
-};
-
-// Uploads text content to Web3.Storage
-async function uploadText(text: string): Promise<string> {
-  const formData = new FormData();
-  formData.append('text', text);
-  const response = await fetch('/api/files', { method: 'POST', body: formData });
-  if (!response.ok) return '';
-  try {
-    const data = await response.json();
-    return data.cid || '';
-  } catch (err) {
-    console.error('Error parsing response:', err);
-    return '';
-  }
 }
 
 // Handles file upload to Web3.Storage
