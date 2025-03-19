@@ -21,7 +21,7 @@ Before you begin working with the decentralized location logger application, ens
    - Download and install from [git-scm.com](https://git-scm.com/downloads)
    - Verify installation: `git --version`
 
-4. **Set up MetaMask (or similar Ethereum wallet) **
+4. **Set up MetaMask (or similar Ethereum wallet)**
    - Install the [MetaMask browser extension](https://metamask.io/download/) (or similar Ethereum wallet browser extension)
    - Create a new wallet or import an existing one
    - Connect to the appropriate Ethereum network
