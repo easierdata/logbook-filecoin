@@ -1,6 +1,6 @@
 # Prerequisites
 
-Before you begin working with the decentralized location claims application, ensure you have the following tools and software installed:
+Before you begin working with the decentralized location logger application, ensure you have the following tools and software installed:
 
 - **Node.js (v16 or later)** - Required to run the application
 - **Yarn package manager** - Required for dependency management

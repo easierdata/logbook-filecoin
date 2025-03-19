@@ -1,6 +1,6 @@
 # Troubleshooting
 
-This guide covers common issues you might encounter when setting up or running the decentralized location claims application and provides solutions.
+This guide covers common issues you might encounter when setting up or running the decentralized location logger application and provides solutions.
 
 ## IPFS Connection Issues
 

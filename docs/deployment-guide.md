@@ -1,6 +1,6 @@
 # Deployment Guide
 
-This guide provides detailed instructions for deploying an instance of the decentralized location claims application.
+This guide provides detailed instructions for deploying an instance of the decentralized location logger application.
 
 ## Initial Setup
 
